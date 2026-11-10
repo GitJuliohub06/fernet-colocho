@@ -11,7 +11,7 @@
   <div id="app-navbar"></div>
 
   <main class="container auth-wrapper">
-    <div class="auth-grid">
+    <div class="auth-grid single-col">
       <!-- TARJETA PRINCIPAL DE LOGIN -->
       <section class="card auth-card">
         <div class="auth-header">
@@ -67,29 +67,6 @@
           <a href="./register.html">Regístrate gratis aquí</a>
         </p>
       </section>
-
-      <!-- PANEL LATERAL DE LABORATORIO / PREVIEW SQL INJECTION -->
-      <aside class="card auth-side-panel">
-        <span class="badge badge-discount">MODO LABORATORIO DE SEGURIDAD</span>
-        <h2 class="side-title">Inspector de Consulta SQL (Login)</h2>
-        <p class="side-desc">
-          En la Fase 3 (Backend con PostgreSQL), este formulario enviará los datos al endpoint <code>POST /api/auth/login</code> construido con concatenación directa.
-        </p>
-
-        <div class="sql-preview-box">
-          <div class="sql-preview-label">Consulta SQL generada en tiempo real:</div>
-          <pre id="sql-live-preview">SELECT * FROM users WHERE username = '' AND password_hash = '';</pre>
-        </div>
-
-        <div class="payload-helper">
-          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">
-            Probar vector de ataque académico (SQLi Auth Bypass):
-          </p>
-          <button type="button" id="btn-inject-payload" class="btn btn-danger btn-sm">
-            ⚡ Insertar Payload: admin' OR '1'='1' --
-          </button>
-        </div>
-      </aside>
     </div>
   </main>
 
