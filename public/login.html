@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión — Fernet&Colocho</title>
+  <link rel="stylesheet" href="./css/global.css" />
+  <link rel="stylesheet" href="./css/auth.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container auth-wrapper">
+    <div class="auth-grid">
+      <!-- TARJETA PRINCIPAL DE LOGIN -->
+      <section class="card auth-card">
+        <div class="auth-header">
+          <span class="badge badge-warning">ACCESO A CUENTA</span>
+          <h1 class="auth-title">Bienvenido de nuevo</h1>
+          <p class="auth-subtitle">Ingresa tus credenciales para acceder a tu biblioteca, carrito o panel de gestión.</p>
+        </div>
+
+        <div id="auth-alert" class="auth-alert" style="display:none;"></div>
+
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="login-identifier" class="form-label">Usuario o Correo Electrónico</label>
+            <input
+              type="text"
+              id="login-identifier"
+              class="form-control"
+              placeholder="Ej. comprador, vendedor, admin o correo"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" class="form-label">Contraseña</label>
+            <input
+              type="password"
+              id="login-password"
+              class="form-control"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit-btn">Iniciar Sesión</button>
+        </form>
+
+        <div class="auth-divider"><span>Credenciales de Prueba Rápida (1 Clic)</span></div>
+
+        <div class="quick-creds-grid">
+          <button type="button" class="btn btn-outline btn-sm" data-fill-role="comprador">
+            🛒 Comprador
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" data-fill-role="vendedor">
+            📦 Vendedor
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" data-fill-role="admin">
+            🛡️ Administrador
+          </button>
+        </div>
+
+        <p class="auth-switch">
+          ¿Aún no tienes cuenta en Fernet&amp;Colocho?
+          <a href="./register.html">Regístrate gratis aquí</a>
+        </p>
+      </section>
+
+      <!-- PANEL LATERAL DE LABORATORIO / PREVIEW SQL INJECTION -->
+      <aside class="card auth-side-panel">
+        <span class="badge badge-discount">MODO LABORATORIO DE SEGURIDAD</span>
+        <h2 class="side-title">Inspector de Consulta SQL (Login)</h2>
+        <p class="side-desc">
+          En la Fase 3 (Backend con PostgreSQL), este formulario enviará los datos al endpoint <code>POST /api/auth/login</code> construido con concatenación directa.
+        </p>
+
+        <div class="sql-preview-box">
+          <div class="sql-preview-label">Consulta SQL generada en tiempo real:</div>
+          <pre id="sql-live-preview">SELECT * FROM users WHERE username = '' AND password_hash = '';</pre>
+        </div>
+
+        <div class="payload-helper">
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">
+            Probar vector de ataque académico (SQLi Auth Bypass):
+          </p>
+          <button type="button" id="btn-inject-payload" class="btn btn-danger btn-sm">
+            ⚡ Insertar Payload: admin' OR '1'='1' --
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="./js/auth.js"></script>
+</body>
+</html>
