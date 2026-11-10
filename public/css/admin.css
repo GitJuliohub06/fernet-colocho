@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
+  min-width: 0;
 }
 
 .admin-access-banner {
@@ -24,6 +25,7 @@
   grid-template-columns: 265px 1fr;
   gap: 1.4rem;
   align-items: start;
+  min-width: 0;
 }
 
 .admin-sidebar {
@@ -101,13 +103,13 @@
 
 .stat-card strong {
   font-family: var(--font-display);
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
   color: var(--primary);
 }
 
 .admin-panel-section {
   display: none;
-  padding: clamp(1rem, 2.5vw, 1.4rem);
+  padding: clamp(0.9rem, 2.5vw, 1.4rem);
   min-width: 0;
 }
 
@@ -144,7 +146,7 @@
 }
 
 .adm-thumb {
-  width: 64px;
+  width: 58px;
   height: 38px;
   object-fit: cover;
   border-radius: 4px;
@@ -178,7 +180,7 @@
   }
 
   .side-nav-btn {
-    flex: 1 1 200px;
+    flex: 1 1 180px;
     text-align: center;
   }
 
@@ -188,9 +190,28 @@
 }
 
 @media (max-width: 600px) {
+  .admin-access-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-side-nav {
+    flex-direction: column;
+  }
+
+  .side-nav-btn {
+    width: 100%;
+    text-align: left;
+  }
+
   .admin-stats-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 0.65rem;
+  }
+
+  .panel-sec-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .panel-sec-actions {
@@ -206,6 +227,6 @@
 
   .adm-form-row {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 0.6rem;
   }
 }

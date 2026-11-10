@@ -53,6 +53,7 @@ html, body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -67,6 +68,7 @@ ul {
 
 img {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -74,7 +76,7 @@ img {
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 1rem;
 }
 
 /* ================= NAVBAR UNIVERSAL ================= */
@@ -82,7 +84,7 @@ img {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(11, 14, 20, 0.92);
+  background: rgba(11, 14, 20, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
 }
@@ -91,23 +93,24 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 74px;
-  gap: 1rem;
+  min-height: 70px;
+  gap: 0.75rem;
 }
 
 .fc-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .fc-brand-logo {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
   background: linear-gradient(135deg, var(--primary), var(--accent));
   display: flex;
@@ -115,8 +118,9 @@ img {
   justify-content: center;
   color: #0b0e14;
   font-weight: 900;
-  font-size: 1.1rem;
+  font-size: 1rem;
   box-shadow: 0 0 16px var(--primary-glow);
+  flex-shrink: 0;
 }
 
 .fc-brand span.amp {
@@ -126,15 +130,17 @@ img {
 .fc-nav-links {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .fc-nav-link {
-  padding: 0.5rem 0.9rem;
+  padding: 0.45rem 0.75rem;
   border-radius: var(--radius-sm);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .fc-nav-link:hover,
@@ -151,16 +157,17 @@ img {
 .fc-nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .fc-role-switcher {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.55rem;
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
   color: var(--text-muted);
@@ -184,18 +191,19 @@ img {
 .fc-user-pill {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.35rem 0.75rem;
+  gap: 0.5rem;
+  padding: 0.3rem 0.65rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .fc-role-badge {
-  padding: 0.15rem 0.55rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -210,14 +218,15 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.45rem 0.8rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-main);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .fc-cart-btn:hover {
@@ -247,6 +256,7 @@ img {
   border: 1px solid transparent;
   transition: var(--transition);
   font-family: var(--font-sans);
+  text-align: center;
 }
 
 .btn:disabled {
@@ -299,8 +309,8 @@ img {
 }
 
 .btn-sm {
-  padding: 0.38rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
 }
 
 /* ================= FORMULARIOS Y CONTROLES ================= */
@@ -350,6 +360,7 @@ img {
   border-radius: 4px;
   font-size: 0.74rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .badge-discount {
@@ -378,17 +389,20 @@ img {
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 0.5rem;
 }
 
 .fc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  min-width: 580px; /* Asegura legibilidad en móvil con scroll horizontal suave */
 }
 
 .fc-table th,
 .fc-table td {
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 0.85rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
@@ -396,7 +410,7 @@ img {
 .fc-table th {
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
@@ -409,13 +423,13 @@ img {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(5, 7, 11, 0.82);
+  background: rgba(5, 7, 11, 0.86);
   backdrop-filter: blur(5px);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  padding: 1rem;
+  padding: 0.75rem;
 }
 
 .modal-backdrop.open {
@@ -428,9 +442,9 @@ img {
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 600px;
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: clamp(1rem, 3.5vw, 1.5rem);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
 }
 
@@ -438,8 +452,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.2rem;
-  padding-bottom: 0.8rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -450,24 +464,28 @@ img {
 
 .toast-container {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 1rem;
+  right: 1rem;
+  left: 1rem;
+  max-width: 380px;
+  margin-left: auto;
   z-index: 3000;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  pointer-events: none;
 }
 
 .fc-toast {
-  min-width: 280px;
-  max-width: 400px;
-  padding: 0.85rem 1.1rem;
+  pointer-events: auto;
+  width: 100%;
+  padding: 0.8rem 1rem;
   border-radius: var(--radius-sm);
   background: var(--bg-card);
   border-left: 4px solid var(--primary);
   box-shadow: var(--shadow-card);
   color: var(--text-main);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -481,8 +499,8 @@ img {
 .fc-toast.info { border-left-color: var(--info); }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ================= FOOTER UNIVERSAL ================= */
@@ -490,7 +508,7 @@ img {
   margin-top: auto;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
-  padding: 2.5rem 0 1.5rem;
+  padding: 2rem 0 1.5rem;
   color: var(--text-muted);
   font-size: 0.86rem;
 }
@@ -498,7 +516,7 @@ img {
 .fc-footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: 2rem;
+  gap: 1.75rem;
   margin-bottom: 1.5rem;
 }
 
@@ -508,17 +526,51 @@ img {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.85rem;
   font-size: 0.8rem;
 }
 
-@media (max-width: 900px) {
+/* ================= BREAKPOINTS GLOBAL ================= */
+@media (max-width: 860px) {
   .fc-navbar-inner {
     flex-wrap: wrap;
-    height: auto;
-    padding: 0.75rem 0;
+    padding: 0.65rem 0;
+    gap: 0.65rem;
   }
+
+  .fc-nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+  }
+
+  .fc-nav-actions {
+    margin-left: auto;
+  }
+
   .fc-footer-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.85rem;
+  }
+
+  .fc-brand {
+    font-size: 1.05rem;
+  }
+
+  .fc-user-pill span:not(.fc-role-badge) {
+    display: none; /* En teléfonos pequeños oculta texto largo del usuario manteniendo su badge */
+  }
+
+  .fc-footer-bottom {
+    flex-direction: column;
+    text-align: center;
   }
 }
