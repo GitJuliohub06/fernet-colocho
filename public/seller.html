@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Vendedor — Fernet&Colocho</title>
+  <link rel="stylesheet" href="./css/global.css" />
+  <link rel="stylesheet" href="./css/seller.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container seller-main">
+    <!-- BANNER DE VERIFICACIÓN DE ROL -->
+    <div id="seller-role-banner" class="seller-access-banner"></div>
+
+    <!-- ENCABEZADO Y MÉTRICAS DE VENDEDOR -->
+    <section class="seller-top-bar card">
+      <div>
+        <span class="badge badge-warning">PORTAL COMERCIAL DE VENDEDORES</span>
+        <h1 class="seller-title">Gestión de Catálogo e Inventario</h1>
+        <p class="seller-subtitle">Publica nuevos videojuegos, administra precios de oferta y controla el stock disponible.</p>
+      </div>
+      <div class="seller-kpi-grid">
+        <div class="kpi-box">
+          <span>Mis Publicaciones</span>
+          <strong id="kpi-seller-total">0</strong>
+        </div>
+        <div class="kpi-box">
+          <span>Unidades en Stock</span>
+          <strong id="kpi-seller-stock">0</strong>
+        </div>
+        <div class="kpi-box warning">
+          <span>Stock Crítico (≤ 5)</span>
+          <strong id="kpi-seller-low">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <div class="seller-workspace">
+      <!-- FORMULARIO DE REGISTRO / EDICIÓN DE VIDEOJUEGO -->
+      <section class="card seller-form-card">
+        <div class="form-card-header">
+          <h2 id="seller-form-title">➕ Registrar Nuevo Videojuego</h2>
+          <button type="button" id="btn-reset-seller-form" class="btn btn-outline btn-sm">Limpiar</button>
+        </div>
+
+        <form id="seller-product-form" novalidate>
+          <input type="hidden" id="prod-edit-id" value="" />
+
+          <div class="form-group">
+            <label for="prod-title" class="form-label">Nombre del Videojuego *</label>
+            <input
+              type="text"
+              id="prod-title"
+              class="form-control"
+              placeholder="Ej. Helldivers 2: Super Earth Edition"
+              required
+            />
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="prod-category" class="form-label">Categoría *</label>
+              <select id="prod-category" class="form-control" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-platform" class="form-label">Plataforma *</label>
+              <select id="prod-platform" class="form-control" required>
+                <option value="PC / Steam">PC / Steam</option>
+                <option value="PC / GOG">PC / GOG</option>
+                <option value="PC / PlayStation">PC / PlayStation</option>
+                <option value="Multiplataforma">Multiplataforma</option>
+                <option value="PC / Switch">PC / Switch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="prod-price" class="form-label">Precio Actual ($ USD) *</label>
+              <input
+                type="number"
+                id="prod-price"
+                class="form-control"
+                step="0.01"
+                min="0.50"
+                placeholder="39.99"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="prod-old-price" class="form-label">Precio Anterior ($ USD)</label>
+              <input
+                type="number"
+                id="prod-old-price"
+                class="form-control"
+                step="0.01"
+                min="0"
+                placeholder="59.99"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="prod-stock" class="form-label">Stock Inicial *</label>
+              <input
+                type="number"
+                id="prod-stock"
+                class="form-control"
+                step="1"
+                min="0"
+                placeholder="25"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-image" class="form-label">URL o Ruta de Portada *</label>
+            <input
+              type="text"
+              id="prod-image"
+              class="form-control"
+              placeholder="https://shared.akamai.steamstatic.com/..."
+              required
+            />
+            <div class="preset-covers-bar">
+              <span>Portadas rápidas:</span>
+              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/553850/header.jpg">Helldivers 2</button>
+              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623730/header.jpg">Palworld</button>
+              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg">Black Myth: Wukong</button>
+            </div>
+          </div>
+
+          <!-- VISTA PREVIA DE IMAGEN -->
+          <div class="cover-preview-box">
+            <img id="prod-image-preview" src="" alt="Vista previa de portada" />
+            <div class="cover-preview-meta">
+              <strong id="preview-title-text">Vista previa del título</strong>
+              <span id="preview-price-text">$0.00 USD</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-desc" class="form-label">Descripción Comercial *</label>
+            <textarea
+              id="prod-desc"
+              class="form-control"
+              rows="3"
+              placeholder="Describe las características principales, modo multijugador o edición del videojuego..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="prod-featured" />
+              <span>Destacar este videojuego en la portada principal</span>
+            </label>
+          </div>
+
+          <button type="submit" id="btn-submit-seller" class="btn btn-primary" style="width:100%;">
+            💾 Guardar Videojuego en Catálogo
+          </button>
+        </form>
+      </section>
+
+      <!-- TABLA DE INVENTARIO DEL VENDEDOR -->
+      <section class="card seller-inventory-card">
+        <div class="inventory-header">
+          <div>
+            <h2>📦 Videojuegos Registrados</h2>
+            <p style="font-size:0.83rem;color:var(--text-muted);">Administra el stock y precios de los productos publicados.</p>
+          </div>
+          <div class="inventory-filters">
+            <input
+              type="text"
+              id="seller-search-input"
+              class="form-control"
+              placeholder="Buscar por nombre o categoría..."
+            />
+            <label class="checkbox-inline" style="font-size:0.82rem;">
+              <input type="checkbox" id="seller-only-mine" />
+              <span>Solo mis productos</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="fc-table">
+            <thead>
+              <tr>
+                <th>Portada</th>
+                <th>Videojuego</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock e Inventario</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="seller-products-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="./js/seller.js"></script>
+</body>
+</html>
