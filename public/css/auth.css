@@ -1,6 +1,6 @@
 .auth-wrapper {
-  padding-top: 2.5rem;
-  padding-bottom: 3.5rem;
+  padding-top: clamp(1.25rem, 4vw, 2.5rem);
+  padding-bottom: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +11,7 @@
   max-width: 980px;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 1.75rem;
+  gap: 1.5rem;
   align-items: start;
 }
 
@@ -21,30 +21,30 @@
 }
 
 .auth-card {
-  padding: 2rem;
+  padding: clamp(1.25rem, 3.5vw, 2rem);
 }
 
 .auth-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.35rem;
 }
 
 .auth-title {
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: clamp(1.35rem, 3vw, 1.65rem);
   margin-top: 0.5rem;
   margin-bottom: 0.35rem;
 }
 
 .auth-subtitle {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .auth-alert {
   padding: 0.8rem 1rem;
   border-radius: var(--radius-sm);
   margin-bottom: 1.1rem;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 500;
 }
 
@@ -62,16 +62,15 @@
 
 .auth-submit-btn {
   width: 100%;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
   padding: 0.75rem;
-  font-size: 0.96rem;
+  font-size: 0.95rem;
 }
 
 .auth-divider {
-  margin: 1.4rem 0 1rem;
+  margin: 1.35rem 0 0.9rem;
   text-align: center;
-  position: relative;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -80,13 +79,13 @@
 .quick-creds-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 
 .auth-switch {
-  margin-top: 1.4rem;
+  margin-top: 1.35rem;
   text-align: center;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--text-muted);
 }
 
@@ -98,7 +97,7 @@
 .form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.9rem;
+  gap: 0.85rem;
 }
 
 .role-lock-notice {
@@ -106,57 +105,71 @@
   border: 1px solid rgba(16, 185, 129, 0.28);
   padding: 0.7rem 0.9rem;
   border-radius: var(--radius-sm);
-  font-size: 0.83rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
 /* ================= PANEL LATERAL SQLi ================= */
 .auth-side-panel {
-  padding: 1.65rem;
+  padding: clamp(1.2rem, 3vw, 1.65rem);
   background: linear-gradient(155deg, #161b26, #0f131d);
   border-color: rgba(139, 92, 246, 0.4);
 }
 
 .side-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   margin: 0.65rem 0 0.45rem;
 }
 
 .side-desc {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-muted);
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .sql-preview-box {
   background: #080a0f;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 0.9rem;
-  margin-bottom: 1.1rem;
+  padding: 0.85rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
 }
 
 .sql-preview-label {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
   margin-bottom: 0.45rem;
 }
 
 #sql-live-preview {
   font-family: Consolas, monospace;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #34d399;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
 }
 
+#btn-inject-payload {
+  width: 100%;
+}
+
+/* ================= BREAKPOINTS AUTH ================= */
 @media (max-width: 860px) {
   .auth-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 560px) {
   .form-row-2 {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .quick-creds-grid {
     grid-template-columns: 1fr;
   }
 }

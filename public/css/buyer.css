@@ -1,108 +1,109 @@
 .buyer-main {
-  padding-top: 1.5rem;
+  padding-top: 1.25rem;
   padding-bottom: 3.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.35rem;
 }
 
 .role-banner {
-  padding: 0.85rem 1.2rem;
+  padding: 0.85rem 1.1rem;
   border-radius: var(--radius-sm);
   background: rgba(245, 158, 11, 0.12);
   border: 1px solid rgba(245, 158, 11, 0.4);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.85rem;
   flex-wrap: wrap;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 
 .buyer-header {
-  padding: 1.5rem;
+  padding: clamp(1.1rem, 2.5vw, 1.5rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
 }
 
 .buyer-title {
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
   margin-top: 0.4rem;
 }
 
 .buyer-subtitle {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .buyer-quick-stats {
-  display: flex;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.75rem;
 }
 
 .stat-pill {
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 0.7rem 1.1rem;
+  padding: 0.65rem 1rem;
   display: flex;
   flex-direction: column;
-  min-width: 135px;
 }
 
 .stat-pill span {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
 }
 
 .stat-pill strong {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   color: var(--primary);
 }
 
 .buyer-workspace {
   display: grid;
   grid-template-columns: 1.45fr 1fr;
-  gap: 1.5rem;
+  gap: 1.4rem;
   align-items: start;
 }
 
 .buyer-left-col {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.4rem;
+  min-width: 0;
 }
 
 .buyer-section {
-  padding: 1.35rem;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
 }
 
 .buyer-sec-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
   flex-wrap: wrap;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .buyer-sec-head h2 {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .buyer-catalog-mini {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 0.85rem;
   max-height: 460px;
   overflow-y: auto;
-  padding-right: 0.25rem;
+  padding-right: 0.2rem;
 }
 
 .mini-prod-card {
@@ -112,7 +113,8 @@
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.55rem;
 }
 
 .mini-prod-top {
@@ -122,15 +124,16 @@
 }
 
 .mini-prod-top img {
-  width: 68px;
-  height: 48px;
+  width: 64px;
+  height: 46px;
+  flex-shrink: 0;
   object-fit: cover;
   border-radius: 4px;
 }
 
 /* ================= PANEL DE CARRITO ================= */
 .buyer-cart-panel {
-  padding: 1.4rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
   position: sticky;
   top: 90px;
 }
@@ -139,23 +142,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.9rem;
+  padding-bottom: 0.85rem;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 1rem;
+  margin-bottom: 0.95rem;
 }
 
 .cart-panel-header h2 {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .cart-items-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.7rem;
   max-height: 360px;
   overflow-y: auto;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.1rem;
 }
 
 .cart-item-row {
@@ -166,27 +169,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
 .cart-item-info {
-  flex: 1;
+  flex: 1 1 140px;
+  min-width: 0;
 }
 
 .cart-item-title {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  word-break: break-word;
 }
 
 .cart-item-meta {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
 }
 
 .qty-controls {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -199,7 +205,7 @@
   color: var(--text-main);
   font-weight: 800;
   cursor: pointer;
-  padding: 0.1rem 0.4rem;
+  padding: 0.15rem 0.45rem;
 }
 
 .qty-btn:hover {
@@ -208,21 +214,21 @@
 
 .cart-summary-box {
   border-top: 1px solid var(--border-color);
-  padding-top: 1rem;
+  padding-top: 0.95rem;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.5rem;
 }
 
 .summary-line {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
 }
 
 .summary-line.total-line {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-main);
   padding-top: 0.5rem;
   border-top: 1px dashed var(--border-color);
@@ -235,7 +241,7 @@
 
 .checkout-btn {
   width: 100%;
-  margin-top: 0.65rem;
+  margin-top: 0.6rem;
   padding: 0.8rem;
 }
 
@@ -248,7 +254,7 @@
   background: #10141d;
   border: 1px solid var(--border-highlight);
   border-radius: var(--radius-sm);
-  padding: 1.75rem;
+  padding: clamp(1rem, 3vw, 1.75rem);
 }
 
 .invoice-top {
@@ -256,7 +262,7 @@
   justify-content: space-between;
   border-bottom: 2px solid var(--primary);
   padding-bottom: 1rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.1rem;
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -264,12 +270,12 @@
 .invoice-meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
   background: rgba(255, 255, 255, 0.02);
-  padding: 0.9rem;
+  padding: 0.85rem;
   border-radius: var(--radius-sm);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
 }
 
 @media print {
@@ -291,11 +297,29 @@
   }
 }
 
-@media (max-width: 920px) {
+/* ================= BREAKPOINTS COMPRADOR ================= */
+@media (max-width: 960px) {
   .buyer-workspace {
     grid-template-columns: 1fr;
   }
+
   .buyer-cart-panel {
     position: static;
+    order: -1;
+  }
+
+  .buyer-quick-stats {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  #buyer-quick-search {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .invoice-meta-grid {
+    grid-template-columns: 1fr;
   }
 }
