@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear Cuenta — Fernet&Colocho</title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container auth-wrapper">
+    <div class="auth-grid single-col">
+      <section class="card auth-card">
+        <div class="auth-header">
+          <span class="badge badge-success">REGISTRO PÚBLICO DE COMPRADORES</span>
+          <h1 class="auth-title">Crea tu cuenta Gamer</h1>
+          <p class="auth-subtitle">
+            Por seguridad, el registro público asigna exclusivamente el rol de <strong>Comprador</strong>.
+          </p>
+        </div>
+
+        <div id="register-alert" class="auth-alert" style="display:none;"></div>
+
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label for="reg-fullname" class="form-label">Nombre Completo</label>
+            <input
+              type="text"
+              id="reg-fullname"
+              class="form-control"
+              placeholder="Ej. Carlos Hernández"
+              required
+            />
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="reg-username" class="form-label">Nombre de Usuario</label>
+              <input
+                type="text"
+                id="reg-username"
+                class="form-control"
+                placeholder="Ej. carlos_gamer"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reg-email" class="form-label">Correo Electrónico</label>
+              <input
+                type="email"
+                id="reg-email"
+                class="form-control"
+                placeholder="carlos@correo.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="reg-password" class="form-label">Contraseña (mín. 6 caracteres)</label>
+              <input
+                type="password"
+                id="reg-password"
+                class="form-control"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reg-confirm" class="form-label">Confirmar Contraseña</label>
+              <input
+                type="password"
+                id="reg-confirm"
+                class="form-control"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="role-lock-notice">
+            🔒 <strong>Rol asignado automáticamente:</strong> <code>comprador</code> (No modificable desde registro público).
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit-btn">Completar Registro</button>
+        </form>
+
+        <p class="auth-switch">
+          ¿Ya tienes una cuenta registrada?
+          <a href="/login.html">Inicia sesión aquí</a>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="/js/auth.js"></script>
+</body>
+</html>
