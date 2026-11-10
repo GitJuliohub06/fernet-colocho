@@ -5,7 +5,7 @@ let activeCategoryId = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
   renderNavbar('index');
-  renderFooter();
+  renderFooter(); 
 
   populateCategoryControls();
   renderHeroShowcase();
@@ -277,7 +277,7 @@ function openGameDetailModal(productId) {
       </div>
       <div style="display:flex;gap:0.6rem;">
         <button id="modal-add-cart" class="btn btn-primary" ${game.stock <= 0 ? 'disabled' : ''}>Agregar al Carrito</button>
-        <a href="/buyer.html" class="btn btn-accent">Ir a Pagar</a>
+        <a href="./buyer.html" class="btn btn-accent">Ir a Pagar</a>
       </div>
     </div>
   `;
