@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fernet&Colocho — Tienda Oficial de Videojuegos Digitales</title>
+  <link rel="stylesheet" href="./css/global.css" />
+  <link rel="stylesheet" href="./css/catalog.css" />
+</head>
+<body>
+  <!-- Navbar Universal inyectada por navbar.js -->
+  <div id="app-navbar"></div>
+
+  <main class="container catalog-main">
+    <!-- HERO PROMOCIONAL -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <span class="hero-tag">🔥 OFERTA ESTELAR DE TEMPORADA</span>
+        <h1 class="hero-title">EXPLORA MUNDOS ÉPICOS AL MEJOR PRECIO</h1>
+        <p class="hero-desc">
+          Licencias digitales instantáneas para PC y consolas. Disfruta de títulos AAA, cooperativos e indies con facturación inmediata en Fernet&amp;Colocho.
+        </p>
+        <div class="hero-actions">
+          <a href="#catalogo-principal" class="btn btn-primary">Explorar Catálogo</a>
+          <button id="btn-hero-deals" class="btn btn-accent">Ver Solo Ofertas (%)</button>
+        </div>
+        <div class="hero-trust">
+          <span>⚡ Entrega Digital Inmediata</span>
+          <span>🛡️ Garantía Oficial F&amp;C</span>
+          <span>💳 Facturación Electrónica</span>
+        </div>
+      </div>
+      <div class="hero-showcase" id="hero-featured-card">
+        <!-- Se rellena dinámicamente con el juego destacado #1 -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE OFERTAS RELÁMPAGO -->
+    <section class="deals-strip">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">⚡ Ofertas Destacadas</h2>
+          <p class="section-subtitle">Descuentos especiales por tiempo limitado en títulos seleccionados</p>
+        </div>
+      </div>
+      <div id="featured-deals-grid" class="deals-grid"></div>
+    </section>
+
+    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+    <section id="catalogo-principal" class="catalog-controls card">
+      <div class="search-wrapper">
+        <label for="search-input" class="form-label">Buscador de Videojuegos (Endpoint `/api/catalog/search` en Fase 3)</label>
+        <div class="search-input-group">
+          <input
+            type="text"
+            id="search-input"
+            class="form-control"
+            placeholder="Buscar por título, género o plataforma (ej. Elden Ring, RPG, Steam)..."
+          />
+          <button id="btn-search-clear" class="btn btn-outline btn-sm" title="Limpiar búsqueda">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="filters-row">
+        <div class="filter-item">
+          <label for="filter-category" class="form-label">Categoría</label>
+          <select id="filter-category" class="form-control">
+            <option value="all">Todas las categorías</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="filter-platform" class="form-label">Plataforma</label>
+          <select id="filter-platform" class="form-control">
+            <option value="all">Todas las plataformas</option>
+            <option value="Steam">PC / Steam</option>
+            <option value="PlayStation">PlayStation</option>
+            <option value="GOG">GOG</option>
+            <option value="Multiplataforma">Multiplataforma</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="filter-sort" class="form-label">Ordenar por</label>
+          <select id="filter-sort" class="form-control">
+            <option value="featured">Destacados primero</option>
+            <option value="price-asc">Precio: Menor a Mayor</option>
+            <option value="price-desc">Precio: Mayor a Menor</option>
+            <option value="title-asc">Nombre: A - Z</option>
+          </select>
+        </div>
+
+        <div class="filter-item filter-checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" id="filter-only-offers" />
+            <span>Solo juegos en oferta</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="category-pills" id="category-pills-container"></div>
+    </section>
+
+    <!-- RESULTADOS DEL CATÁLOGO -->
+    <section class="catalog-results">
+      <div class="results-meta">
+        <span id="results-counter">Cargando catálogo...</span>
+      </div>
+      <div id="catalog-grid" class="games-grid"></div>
+    </section>
+  </main>
+
+  <!-- MODAL DE DETALLE DE VIDEOJUEGO -->
+  <div id="game-detail-modal" class="modal-backdrop">
+    <div class="modal-box modal-game-detail">
+      <div class="modal-header">
+        <h3 id="modal-game-title" class="modal-title">Detalle del Videojuego</h3>
+        <button id="btn-close-modal" class="btn btn-outline btn-sm">✕ Cerrar</button>
+      </div>
+      <div id="modal-game-body"></div>
+    </div>
+  </div>
+
+  <!-- Footer Universal -->
+  <div id="app-footer"></div>
+
+  <script type="module" src="./js/catalog.js"></script>
+</body>
+</html>
