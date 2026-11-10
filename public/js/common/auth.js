@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function redirectByRole(role) {
   if (role === 'admin') {
-    window.location.href = '/admin.html';
+    window.location.href = './admin.html';
   } else if (role === 'vendedor') {
-    window.location.href = '/seller.html';
+    window.location.href = './seller.html';
   } else {
-    window.location.href = '/buyer.html';
+    window.location.href = './buyer.html';
   }
 }
 
@@ -168,7 +168,7 @@ function initRegisterView() {
 
     showAlert('register-alert', '¡Cuenta creada con éxito! Redirigiendo a la zona de comprador...', 'success');
     setTimeout(() => {
-      window.location.href = '/buyer.html';
+      window.location.href = './buyer.html';
     }, 750);
   });
 }
