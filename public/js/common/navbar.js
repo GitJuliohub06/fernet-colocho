@@ -40,13 +40,13 @@ export function renderNavbar(activePage = 'index') {
   let roleLinkHtml = '';
   if (session) {
     if (session.role === 'comprador') {
-      roleLinkHtml = `<a href="/buyer.html" class="fc-nav-link role-link ${activePage === 'buyer' ? 'active' : ''}">🛒 Zona Comprador</a>`;
+      roleLinkHtml = `<a href="./buyer.html" class="fc-nav-link role-link ${activePage === 'buyer' ? 'active' : ''}">🛒 Zona Comprador</a>`;
     } else if (session.role === 'vendedor') {
-      roleLinkHtml = `<a href="/seller.html" class="fc-nav-link role-link ${activePage === 'seller' ? 'active' : ''}">📦 Panel Vendedor</a>`;
+      roleLinkHtml = `<a href="./seller.html" class="fc-nav-link role-link ${activePage === 'seller' ? 'active' : ''}">📦 Panel Vendedor</a>`;
     } else if (session.role === 'admin') {
       roleLinkHtml = `
-        <a href="/seller.html" class="fc-nav-link ${activePage === 'seller' ? 'active' : ''}">Panel Vendedor</a>
-        <a href="/admin.html" class="fc-nav-link role-link ${activePage === 'admin' ? 'active' : ''}">🛡️ Panel Admin</a>
+        <a href="./seller.html" class="fc-nav-link ${activePage === 'seller' ? 'active' : ''}">Panel Vendedor</a>
+        <a href="./admin.html" class="fc-nav-link role-link ${activePage === 'admin' ? 'active' : ''}">🛡️ Panel Admin</a>
       `;
     }
   }
@@ -60,21 +60,21 @@ export function renderNavbar(activePage = 'index') {
       <button id="btn-logout-nav" class="btn btn-outline btn-sm">Salir</button>
     `
     : `
-      <a href="/login.html" class="btn btn-outline btn-sm ${activePage === 'login' ? 'active' : ''}">Iniciar Sesión</a>
-      <a href="/register.html" class="btn btn-primary btn-sm ${activePage === 'register' ? 'active' : ''}">Crear Cuenta</a>
+      <a href="./login.html" class="btn btn-outline btn-sm ${activePage === 'login' ? 'active' : ''}">Iniciar Sesión</a>
+      <a href="./register.html" class="btn btn-primary btn-sm ${activePage === 'register' ? 'active' : ''}">Crear Cuenta</a>
     `;
 
   navHost.innerHTML = `
     <header class="fc-navbar">
       <div class="container fc-navbar-inner">
-        <a href="/index.html" class="fc-brand">
+        <a href="./index.html" class="fc-brand">
           <div class="fc-brand-logo">F&C</div>
           <div>FERNET<span class="amp">&</span>COLOCHO</div>
         </a>
 
         <nav class="fc-nav-links">
-          <a href="/index.html" class="fc-nav-link ${activePage === 'index' ? 'active' : ''}">Tienda</a>
-          <a href="/buyer.html" class="fc-nav-link ${activePage === 'buyer' ? 'active' : ''}">Facturación</a>
+          <a href="./index.html" class="fc-nav-link ${activePage === 'index' ? 'active' : ''}">Tienda</a>
+          <a href="./buyer.html" class="fc-nav-link ${activePage === 'buyer' ? 'active' : ''}">Facturación</a>
           ${roleLinkHtml}
         </nav>
 
@@ -89,7 +89,7 @@ export function renderNavbar(activePage = 'index') {
             </select>
           </div>
 
-          <a href="/buyer.html" class="fc-cart-btn" title="Ir al carrito y facturación">
+          <a href="./buyer.html" class="fc-cart-btn" title="Ir al carrito y facturación">
             <span>🛒</span>
             <span id="nav-cart-badge" class="fc-cart-count">${cartCount}</span>
           </a>
@@ -106,7 +106,7 @@ export function renderNavbar(activePage = 'index') {
       MockDB.setSession(null);
       showToast('Sesión cerrada correctamente.', 'info');
       setTimeout(() => {
-        window.location.href = '/index.html';
+        window.location.href = './index.html';
       }, 400);
     });
   }
@@ -118,14 +118,14 @@ export function renderNavbar(activePage = 'index') {
       const users = MockDB.getUsers();
       if (val === 'guest') {
         MockDB.setSession(null);
-        window.location.href = '/index.html';
+        window.location.href = './index.html';
       } else {
         const found = users.find((u) => u.role === val);
         if (found) {
           MockDB.setSession(found);
-          if (val === 'comprador') window.location.href = '/buyer.html';
-          if (val === 'vendedor') window.location.href = '/seller.html';
-          if (val === 'admin') window.location.href = '/admin.html';
+          if (val === 'comprador') window.location.href = './buyer.html';
+          if (val === 'vendedor') window.location.href = './seller.html';
+          if (val === 'admin') window.location.href = './admin.html';
         }
       }
     });
@@ -158,10 +158,10 @@ export function renderFooter() {
           <div>
             <strong style="color:var(--text-main);display:block;margin-bottom:0.5rem;">Navegación Rápida</strong>
             <ul style="display:flex;flex-direction:column;gap:0.35rem;">
-              <li><a href="/index.html">Catálogo y Ofertas</a></li>
-              <li><a href="/login.html">Iniciar Sesión</a></li>
-              <li><a href="/register.html">Registro de Compradores</a></li>
-              <li><a href="/buyer.html">Mi Carrito y Facturas</a></li>
+              <li><a href="./index.html">Catálogo y Ofertas</a></li>
+              <li><a href="./login.html">Iniciar Sesión</a></li>
+              <li><a href="./register.html">Registro de Compradores</a></li>
+              <li><a href="./buyer.html">Mi Carrito y Facturas</a></li>
             </ul>
           </div>
           <div>
