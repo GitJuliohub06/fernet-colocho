@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zona de Comprador y Facturación — Fernet&Colocho</title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/buyer.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container buyer-main">
+    <!-- AVISO DE CONTROL DE SESIÓN -->
+    <div id="buyer-role-banner" class="role-banner"></div>
+
+    <!-- CABECERA DEL PANEL DE COMPRADOR -->
+    <section class="buyer-header card">
+      <div>
+        <span class="badge badge-success">PORTAL DE COMPRADOR Y FACTURACIÓN</span>
+        <h1 class="buyer-title">Mi Carrito y Facturación Digital</h1>
+        <p class="buyer-subtitle">Selecciona tus videojuegos, ajusta cantidades y emite tu factura oficial al instante.</p>
+      </div>
+      <div class="buyer-quick-stats">
+        <div class="stat-pill">
+          <span>Ítems en Carrito</span>
+          <strong id="stat-cart-items">0</strong>
+        </div>
+        <div class="stat-pill">
+          <span>Facturas Emitidas</span>
+          <strong id="stat-orders-count">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAYOUT PRINCIPAL: CATÁLOGO RÁPIDO (IZQUIERDA) + CARRITO Y RESUMEN (DERECHA) -->
+    <div class="buyer-workspace">
+      <!-- COLUMNA IZQUIERDA: SELECCIÓN RÁPIDA E HISTORIAL -->
+      <div class="buyer-left-col">
+        <section class="card buyer-section">
+          <div class="buyer-sec-head">
+            <h2>🎮 Agregar Videojuegos al Pedido</h2>
+            <input
+              type="text"
+              id="buyer-quick-search"
+              class="form-control"
+              style="max-width:260px;"
+              placeholder="Filtrar catálogo rápido..."
+            />
+          </div>
+          <div id="buyer-products-list" class="buyer-catalog-mini"></div>
+        </section>
+
+        <!-- HISTORIAL DE FACTURAS EMITIDAS -->
+        <section class="card buyer-section">
+          <div class="buyer-sec-head">
+            <h2>🧾 Mis Compras y Facturas Emitidas</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="fc-table">
+              <thead>
+                <tr>
+                  <th>Nº Factura</th>
+                  <th>Fecha</th>
+                  <th>Comprador</th>
+                  <th>Ítems</th>
+                  <th>Total</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="orders-history-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- COLUMNA DERECHA: CARRITO Y CHECKOUT -->
+      <aside class="card buyer-cart-panel">
+        <div class="cart-panel-header">
+          <h2>🛒 Detalle del Carrito</h2>
+          <button id="btn-clear-cart" class="btn btn-danger btn-sm">Vaciar</button>
+        </div>
+
+        <div id="cart-items-container" class="cart-items-list"></div>
+
+        <div class="cart-summary-box">
+          <div class="summary-line">
+            <span>Subtotal (Sin IVA):</span>
+            <strong id="summary-subtotal">$0.00</strong>
+          </div>
+          <div class="summary-line">
+            <span>IVA Estimado (13%):</span>
+            <strong id="summary-tax">$0.00</strong>
+          </div>
+          <div class="summary-line total-line">
+            <span>Total a Facturar:</span>
+            <strong id="summary-total">$0.00</strong>
+          </div>
+
+          <button id="btn-confirm-purchase" class="btn btn-primary checkout-btn">
+            ✅ Confirmar Compra y Generar Factura
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- MODAL DE FACTURA COMERCIAL DETALLADA -->
+  <div id="invoice-modal" class="modal-backdrop">
+    <div class="modal-box invoice-modal-box">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">Factura Electrónica Generada</h3>
+        <div style="display:flex;gap:0.5rem;">
+          <button id="btn-print-invoice" class="btn btn-primary btn-sm">🖨️ Imprimir / Guardar PDF</button>
+          <button id="btn-close-invoice" class="btn btn-outline btn-sm">✕ Cerrar</button>
+        </div>
+      </div>
+      <div id="invoice-document-body" class="invoice-paper"></div>
+    </div>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="/js/buyer.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zona de Comprador y Facturación — Fernet&Colocho</title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/buyer.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container buyer-main">
+    <!-- AVISO DE CONTROL DE SESIÓN -->
+    <div id="buyer-role-banner" class="role-banner"></div>
+
+    <!-- CABECERA DEL PANEL DE COMPRADOR -->
+    <section class="buyer-header card">
+      <div>
+        <span class="badge badge-success">PORTAL DE COMPRADOR Y FACTURACIÓN</span>
+        <h1 class="buyer-title">Mi Carrito y Facturación Digital</h1>
+        <p class="buyer-subtitle">Selecciona tus videojuegos, ajusta cantidades y emite tu factura oficial al instante.</p>
+      </div>
+      <div class="buyer-quick-stats">
+        <div class="stat-pill">
+          <span>Ítems en Carrito</span>
+          <strong id="stat-cart-items">0</strong>
+        </div>
+        <div class="stat-pill">
+          <span>Facturas Emitidas</span>
+          <strong id="stat-orders-count">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAYOUT PRINCIPAL: CATÁLOGO RÁPIDO (IZQUIERDA) + CARRITO Y RESUMEN (DERECHA) -->
+    <div class="buyer-workspace">
+      <!-- COLUMNA IZQUIERDA: SELECCIÓN RÁPIDA E HISTORIAL -->
+      <div class="buyer-left-col">
+        <section class="card buyer-section">
+          <div class="buyer-sec-head">
+            <h2>🎮 Agregar Videojuegos al Pedido</h2>
+            <input
+              type="text"
+              id="buyer-quick-search"
+              class="form-control"
+              style="max-width:260px;"
+              placeholder="Filtrar catálogo rápido..."
+            />
+          </div>
+          <div id="buyer-products-list" class="buyer-catalog-mini"></div>
+        </section>
+
+        <!-- HISTORIAL DE FACTURAS EMITIDAS -->
+        <section class="card buyer-section">
+          <div class="buyer-sec-head">
+            <h2>🧾 Mis Compras y Facturas Emitidas</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="fc-table">
+              <thead>
+                <tr>
+                  <th>Nº Factura</th>
+                  <th>Fecha</th>
+                  <th>Comprador</th>
+                  <th>Ítems</th>
+                  <th>Total</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="orders-history-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- COLUMNA DERECHA: CARRITO Y CHECKOUT -->
+      <aside class="card buyer-cart-panel">
+        <div class="cart-panel-header">
+          <h2>🛒 Detalle del Carrito</h2>
+          <button id="btn-clear-cart" class="btn btn-danger btn-sm">Vaciar</button>
+        </div>
+
+        <div id="cart-items-container" class="cart-items-list"></div>
+
+        <div class="cart-summary-box">
+          <div class="summary-line">
+            <span>Subtotal (Sin IVA):</span>
+            <strong id="summary-subtotal">$0.00</strong>
+          </div>
+          <div class="summary-line">
+            <span>IVA Estimado (13%):</span>
+            <strong id="summary-tax">$0.00</strong>
+          </div>
+          <div class="summary-line total-line">
+            <span>Total a Facturar:</span>
+            <strong id="summary-total">$0.00</strong>
+          </div>
+
+          <button id="btn-confirm-purchase" class="btn btn-primary checkout-btn">
+            ✅ Confirmar Compra y Generar Factura
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- MODAL DE FACTURA COMERCIAL DETALLADA -->
+  <div id="invoice-modal" class="modal-backdrop">
+    <div class="modal-box invoice-modal-box">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">Factura Electrónica Generada</h3>
+        <div style="display:flex;gap:0.5rem;">
+          <button id="btn-print-invoice" class="btn btn-primary btn-sm">🖨️ Imprimir / Guardar PDF</button>
+          <button id="btn-close-invoice" class="btn btn-outline btn-sm">✕ Cerrar</button>
+        </div>
+      </div>
+      <div id="invoice-document-body" class="invoice-paper"></div>
+    </div>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="/js/buyer.js"></script>
+</body>
+</html>
