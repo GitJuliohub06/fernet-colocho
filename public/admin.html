@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración — Fernet&Colocho</title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="container admin-main">
+    <!-- AVISO DE CONTROL DE ACCESO ADMINISTRATIVO -->
+    <div id="admin-role-banner" class="admin-access-banner"></div>
+
+    <div class="admin-layout">
+      <!-- BARRA LATERAL ADMINISTRATIVA -->
+      <aside class="card admin-sidebar">
+        <div class="admin-sidebar-brand">
+          <span class="badge badge-discount">MODO ROOT / ADMIN</span>
+          <h2>Consola Central</h2>
+          <p>Control total de inventario, usuarios y permisos RBAC.</p>
+        </div>
+
+        <nav class="admin-side-nav">
+          <button class="side-nav-btn active" data-tab="tab-products">
+            🎮 CRUD de Productos
+          </button>
+          <button class="side-nav-btn" data-tab="tab-users">
+            👥 CRUD de Usuarios y Roles
+          </button>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <button id="btn-admin-reset-data" class="btn btn-outline btn-sm" style="width:100%;">
+            🔄 Restaurar Base Demo
+          </button>
+        </div>
+      </aside>
+
+      <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
+      <div class="admin-content">
+        <!-- TARJETAS DE ESTADÍSTICAS GLOBALES -->
+        <section class="admin-stats-grid">
+          <div class="card stat-card">
+            <span>Total Videojuegos</span>
+            <strong id="adm-stat-products">0</strong>
+          </div>
+          <div class="card stat-card">
+            <span>Usuarios Registrados</span>
+            <strong id="adm-stat-users">0</strong>
+          </div>
+          <div class="card stat-card">
+            <span>Facturas Emitidas</span>
+            <strong id="adm-stat-orders">0</strong>
+          </div>
+          <div class="card stat-card">
+            <span>Ingresos Facturados</span>
+            <strong id="adm-stat-revenue">$0.00</strong>
+          </div>
+        </section>
+
+        <!-- PESTAÑA 1: CRUD COMPLETO DE PRODUCTOS -->
+        <section id="tab-products" class="card admin-panel-section active">
+          <div class="panel-sec-header">
+            <div>
+              <h2>🎮 Administración Global de Productos (CRUD)</h2>
+              <p>Crea, consulta, actualiza o elimina cualquier videojuego del catálogo.</p>
+            </div>
+            <div class="panel-sec-actions">
+              <input
+                type="text"
+                id="adm-prod-search"
+                class="form-control"
+                placeholder="Buscar producto..."
+              />
+              <button id="btn-open-new-prod" class="btn btn-primary">
+                + Nuevo Producto
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="fc-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Portada</th>
+                  <th>Título y Plataforma</th>
+                  <th>Categoría</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                  <th>Acciones CRUD</th>
+                </tr>
+              </thead>
+              <tbody id="adm-products-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- PESTAÑA 2: CRUD COMPLETO DE USUARIOS Y ROLES -->
+        <section id="tab-users" class="card admin-panel-section">
+          <div class="panel-sec-header">
+            <div>
+              <h2>👥 Administración de Usuarios y Control de Roles (CRUD)</h2>
+              <p>Gestiona cuentas de compradores, vendedores y administradores.</p>
+            </div>
+            <div class="panel-sec-actions">
+              <input
+                type="text"
+                id="adm-user-search"
+                class="form-control"
+                placeholder="Buscar usuario o correo..."
+              />
+              <button id="btn-open-new-user" class="btn btn-accent">
+                + Nuevo Usuario
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="fc-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre Completo</th>
+                  <th>Usuario / Correo</th>
+                  <th>Rol Asignado</th>
+                  <th>Estado</th>
+                  <th>Acciones CRUD</th>
+                </tr>
+              </thead>
+              <tbody id="adm-users-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL CRUD PRODUCTO -->
+  <div id="adm-product-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="adm-prod-modal-title" class="modal-title">Crear / Editar Producto</h3>
+        <button type="button" id="btn-close-prod-modal" class="btn btn-outline btn-sm">✕</button>
+      </div>
+      <form id="adm-product-form">
+        <input type="hidden" id="adm-prod-id" />
+        <div class="form-group">
+          <label class="form-label">Nombre del Videojuego *</label>
+          <input type="text" id="adm-prod-title" class="form-control" required />
+        </div>
+        <div class="adm-form-row">
+          <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select id="adm-prod-category" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plataforma *</label>
+            <input type="text" id="adm-prod-platform" class="form-control" placeholder="PC / Steam" required />
+          </div>
+        </div>
+        <div class="adm-form-row">
+          <div class="form-group">
+            <label class="form-label">Precio Actual ($ USD) *</label>
+            <input type="number" step="0.01" min="0.5" id="adm-prod-price" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio Anterior ($ Opcional)</label>
+            <input type="number" step="0.01" min="0" id="adm-prod-old-price" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stock *</label>
+            <input type="number" step="1" min="0" id="adm-prod-stock" class="form-control" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL de Imagen *</label>
+          <input type="text" id="adm-prod-image" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descripción *</label>
+          <textarea id="adm-prod-desc" class="form-control" rows="3" required></textarea>
+        </div>
+        <div style="display:flex;gap:1.2rem;margin-bottom:1rem;">
+          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+            <input type="checkbox" id="adm-prod-featured" /> Destacado
+          </label>
+          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+            <input type="checkbox" id="adm-prod-active" checked /> Visible en tienda
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Guardar Producto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CRUD USUARIO -->
+  <div id="adm-user-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="adm-user-modal-title" class="modal-title">Crear / Editar Usuario</h3>
+        <button type="button" id="btn-close-user-modal" class="btn btn-outline btn-sm">✕</button>
+      </div>
+      <form id="adm-user-form">
+        <input type="hidden" id="adm-user-id" />
+        <div class="form-group">
+          <label class="form-label">Nombre Completo *</label>
+          <input type="text" id="adm-user-fullname" class="form-control" required />
+        </div>
+        <div class="adm-form-row">
+          <div class="form-group">
+            <label class="form-label">Usuario (Username) *</label>
+            <input type="text" id="adm-user-username" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico *</label>
+            <input type="email" id="adm-user-email" class="form-control" required />
+          </div>
+        </div>
+        <div class="adm-form-row">
+          <div class="form-group">
+            <label class="form-label">Rol del Sistema *</label>
+            <select id="adm-user-role" class="form-control" required>
+              <option value="comprador">Comprador</option>
+              <option value="vendedor">Vendedor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña *</label>
+            <input type="text" id="adm-user-password" class="form-control" placeholder="Clave de acceso" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+            <input type="checkbox" id="adm-user-active" checked /> Cuenta Activa (Permite iniciar sesión)
+          </label>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width:100%;">Guardar Usuario</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN PARA OPERACIONES DESTRUCTIVAS -->
+  <div id="adm-confirm-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color:#f87171;">⚠️ Confirmar Eliminación</h3>
+      </div>
+      <p id="adm-confirm-text" style="color:var(--text-muted);margin-bottom:1.4rem;font-size:0.92rem;"></p>
+      <div style="display:flex;justify-content:flex-end;gap:0.65rem;">
+        <button type="button" id="btn-cancel-delete" class="btn btn-outline">Cancelar</button>
+        <button type="button" id="btn-confirm-delete" class="btn btn-danger">Sí, Eliminar Permanentemente</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
