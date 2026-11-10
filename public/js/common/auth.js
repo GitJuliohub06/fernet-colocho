@@ -1,5 +1,5 @@
-import { MockDB } from './common/mock-data.js';
-import { renderNavbar, renderFooter, showToast } from './common/navbar.js';
+import { MockDB } from './mock-data.js';
+import { renderNavbar, renderFooter, showToast } from './navbar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const isLoginPage = Boolean(document.getElementById('login-form'));

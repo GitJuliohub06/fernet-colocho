@@ -1,5 +1,5 @@
-import { MockDB } from './common/mock-data.js';
-import { renderNavbar, renderFooter, showToast } from './common/navbar.js';
+import { MockDB } from './mock-data.js';
+import { renderNavbar, renderFooter, showToast } from './navbar.js';
 
 const TAX_RATE = 0.13;
 
