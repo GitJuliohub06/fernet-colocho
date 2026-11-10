@@ -44,11 +44,32 @@ function verifySellerAccessBanner() {
 }
 
 function populateSellerCategories() {
-  const select = document.getElementById('prod-category');
-  const categories = MockDB.getCategories();
-  select.innerHTML = categories
-    .map((c) => `<option value="${c.id}">${c.name}</option>`)
-    .join('');
+    const categorySelect = document.getElementById('prod-category');
+
+    if (!categorySelect) return;
+
+    // Intentar obtener las categorías del MockDB
+    let categories = MockDB.getCategories();
+
+    // Si no hay categorías, utilizar una lista de respaldo
+    if (!categories || categories.length === 0) {
+        categories = [
+            { id: 1, name: 'RPG y Acción' },
+            { id: 2, name: 'Shooter y Cooperativo' },
+            { id: 3, name: 'Terror y Supervivencia' },
+            { id: 4, name: 'Lucha y Arcade' },
+            { id: 5, name: 'Estrategia y Deportes' }
+        ];
+    }
+
+    categorySelect.innerHTML = `
+        <option value="">Seleccioná una categoría</option>
+        ${categories.map(category => `
+            <option value="${category.id}">
+                ${category.name}
+            </option>
+        `).join('')}
+    `;
 }
 
 function updateCoverPreview() {
@@ -68,87 +89,201 @@ function updateCoverPreview() {
   document.getElementById('preview-price-text').textContent = `$${price} USD`;
 }
 
+
 function renderSellerInventory() {
   const session = MockDB.getSession();
-  const query = document.getElementById('seller-search-input').value.trim().toLowerCase();
-  const onlyMine = document.getElementById('seller-only-mine').checked;
+
+  const searchInput = document.getElementById('seller-search-input');
+  const onlyMineInput = document.getElementById('seller-only-mine');
+  const tbody = document.getElementById('seller-products-tbody');
+
+  const query = searchInput.value.trim().toLowerCase();
+  const onlyMine = onlyMineInput.checked;
 
   let products = MockDB.getProducts();
 
   if (onlyMine && session) {
-    products = products.filter((p) => Number(p.seller_id) === Number(session.id));
+    products = products.filter(
+      (p) => Number(p.seller_id) === Number(session.id)
+    );
   }
 
-  // Actualizar KPIs
+  // Actualizar indicadores
   document.getElementById('kpi-seller-total').textContent = products.length;
-  document.getElementById('kpi-seller-stock').textContent = products.reduce((a, b) => a + Number(b.stock), 0);
-  document.getElementById('kpi-seller-low').textContent = products.filter((p) => Number(p.stock) <= 5).length;
 
-  const filtered = products.filter(
-    (p) =>
+  document.getElementById('kpi-seller-stock').textContent =
+    products.reduce((total, p) => total + Number(p.stock || 0), 0);
+
+  document.getElementById('kpi-seller-low').textContent =
+    products.filter((p) => Number(p.stock) <= 5).length;
+
+  // Filtrar productos
+  const filtered = products.filter((p) => {
+    const title = String(p.title || '').toLowerCase();
+    const category = String(p.category_name || '').toLowerCase();
+    const platform = String(p.platform || '').toLowerCase();
+
+    return (
       !query ||
-      p.title.toLowerCase().includes(query) ||
-      p.category_name.toLowerCase().includes(query) ||
-      p.platform.toLowerCase().includes(query)
-  );
+      title.includes(query) ||
+      category.includes(query) ||
+      platform.includes(query)
+    );
+  });
 
-  const tbody = document.getElementById('seller-products-tbody');
+  // Limpiar tabla
+  tbody.replaceChildren();
+
   if (filtered.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">
-          No se encontraron videojuegos registrados con ese criterio.
-        </td>
-      </tr>
-    `;
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+
+    cell.colSpan = 6;
+    cell.textContent = 'No se encontraron videojuegos registrados con ese criterio.';
+    cell.style.textAlign = 'center';
+    cell.style.padding = '2rem';
+    cell.style.color = 'var(--text-muted)';
+
+    row.appendChild(cell);
+    tbody.appendChild(row);
     return;
   }
 
-  tbody.innerHTML = filtered
-    .map((p) => {
-      const fallback = MockDB.getFallbackCover(p.title);
-      const stockClass = p.stock <= 0 ? 'badge-danger' : p.stock <= 5 ? 'badge-warning' : 'badge-success';
-      return `
-        <tr>
-          <td>
-            <img class="seller-thumb-mini" src="${p.image_url}" alt="${p.title}" onerror="this.onerror=null;this.src='${fallback}';" />
-          </td>
-          <td>
-            <strong>${p.title}</strong>
-            <div style="font-size:0.75rem;color:var(--text-muted);">${p.platform}</div>
-          </td>
-          <td>${p.category_name}</td>
-          <td>
-            <strong style="color:var(--primary);">$${Number(p.price).toFixed(2)}</strong>
-            ${p.old_price ? `<div style="font-size:0.74rem;text-decoration:line-through;color:var(--text-dim);">$${Number(p.old_price).toFixed(2)}</div>` : ''}
-          </td>
-          <td>
-            <div class="stock-Quick-ctrl">
-              <button class="btn btn-outline btn-sm" data-stock-delta="-1" data-id="${p.id}">-1</button>
-              <span class="badge ${stockClass}" style="min-width:64px;justify-content:center;">${p.stock} uds</span>
-              <button class="btn btn-outline btn-sm" data-stock-delta="5" data-id="${p.id}">+5</button>
-            </div>
-          </td>
-          <td>
-            <button class="btn btn-outline btn-sm" data-edit-prod="${p.id}">✏️ Editar</button>
-          </td>
-        </tr>
-      `;
-    })
-    .join('');
+  // Construir cada fila de forma segura
+  filtered.forEach((p) => {
+    const row = document.createElement('tr');
 
+    // PORTADA
+    const imageCell = document.createElement('td');
+    const image = document.createElement('img');
+
+    image.className = 'seller-thumb-mini';
+    image.alt = `Portada de ${p.title || 'videojuego'}`;
+
+    const fallback = MockDB.getFallbackCover(p.title || 'Videojuego');
+
+    image.onerror = () => {
+      image.onerror = null;
+      image.src = fallback;
+    };
+
+    image.src = p.image_url || fallback;
+
+    imageCell.appendChild(image);
+
+    // NOMBRE Y PLATAFORMA
+    const titleCell = document.createElement('td');
+
+    const title = document.createElement('strong');
+    title.textContent = p.title || 'Sin título';
+
+    const platform = document.createElement('div');
+    platform.style.fontSize = '0.78rem';
+    platform.style.color = 'var(--text-muted)';
+    platform.textContent = p.platform || 'Sin plataforma';
+
+    titleCell.append(title, platform);
+
+    // CATEGORÍA
+    const categoryCell = document.createElement('td');
+    categoryCell.textContent = p.category_name || 'General';
+
+    // PRECIO
+    const priceCell = document.createElement('td');
+
+    const currentPrice = document.createElement('strong');
+    currentPrice.style.color = 'var(--primary)';
+    currentPrice.textContent = `$${Number(p.price || 0).toFixed(2)}`;
+
+    priceCell.appendChild(currentPrice);
+
+    if (p.old_price) {
+      const oldPrice = document.createElement('div');
+      oldPrice.style.fontSize = '0.74rem';
+      oldPrice.style.textDecoration = 'line-through';
+      oldPrice.style.color = 'var(--text-dim)';
+      oldPrice.textContent = `$${Number(p.old_price).toFixed(2)}`;
+
+      priceCell.appendChild(oldPrice);
+    }
+
+    // STOCK
+    const stockCell = document.createElement('td');
+    const stockControls = document.createElement('div');
+
+    stockControls.className = 'stock-Quick-ctrl';
+
+    const stock = Number(p.stock || 0);
+    const stockClass =
+      stock <= 0 ? 'badge-danger' :
+      stock <= 5 ? 'badge-warning' :
+      'badge-success';
+
+    const decreaseButton = document.createElement('button');
+    decreaseButton.className = 'btn btn-outline btn-sm';
+    decreaseButton.textContent = '-1';
+    decreaseButton.dataset.stockDelta = '-1';
+    decreaseButton.dataset.id = p.id;
+
+    const stockBadge = document.createElement('span');
+    stockBadge.className = `badge ${stockClass}`;
+    stockBadge.textContent = `${stock} uds`;
+
+    const increaseButton = document.createElement('button');
+    increaseButton.className = 'btn btn-outline btn-sm';
+    increaseButton.textContent = '+5';
+    increaseButton.dataset.stockDelta = '5';
+    increaseButton.dataset.id = p.id;
+
+    stockControls.append(
+      decreaseButton,
+      stockBadge,
+      increaseButton
+    );
+
+    stockCell.appendChild(stockControls);
+
+    // ACCIONES
+    const actionsCell = document.createElement('td');
+
+    const editButton = document.createElement('button');
+    editButton.className = 'btn btn-outline btn-sm';
+    editButton.textContent = '✏️ Editar';
+    editButton.dataset.editProd = p.id;
+
+    actionsCell.appendChild(editButton);
+
+    // Agregar todas las celdas
+    row.append(
+      imageCell,
+      titleCell,
+      categoryCell,
+      priceCell,
+      stockCell,
+      actionsCell
+    );
+
+    tbody.appendChild(row);
+  });
+
+  // Eventos de stock
   tbody.querySelectorAll('[data-stock-delta]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      adjustProductStock(Number(btn.dataset.id), Number(btn.dataset.stockDelta));
+      adjustProductStock(
+        Number(btn.dataset.id),
+        Number(btn.dataset.stockDelta)
+      );
     });
   });
 
+  // Eventos de edición
   tbody.querySelectorAll('[data-edit-prod]').forEach((btn) => {
     btn.addEventListener('click', () => {
       loadProductIntoSellerForm(Number(btn.dataset.editProd));
     });
   });
 }
+
 
 function adjustProductStock(productId, delta) {
   const products = MockDB.getProducts();
