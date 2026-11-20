@@ -5,6 +5,13 @@ require('dotenv').config();
 
 const pool = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const userRoutes = require('./routes/userRoutes');
+const { getCategories } = require('./controllers/productController');
+const { getAdminStats } = require('./controllers/userController');
+const { requireAuth, requireRole } = require('./middlewares/authMiddleware');
 
 const app = express();
 const HOST = process.env.HOST || '127.0.0.1';
@@ -42,6 +49,12 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.get('/api/categories', getCategories);
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.get('/api/admin/stats', requireAuth, requireRole('admin'), getAdminStats);
+app.use('/api/users', userRoutes);
 
 app.use('/api', (_req, res) => {
   return res.status(404).json({ error: 'Endpoint de API no encontrado.' });
