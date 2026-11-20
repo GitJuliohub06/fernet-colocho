@@ -1,17 +1,20 @@
-import { MockDB } from './common/mock-data.js';
+import { apiRequest, getFallbackCover, notifyCartUpdated } from './common/api.js';
 import { renderNavbar, renderFooter, showToast } from './common/navbar.js';
 
 let activeCategoryId = 'all';
+let currentProducts = [];
+let searchTimer = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderNavbar('index');
-  renderFooter(); 
 
-  populateCategoryControls();
-  renderHeroShowcase();
-  renderFeaturedDeals();
-  applyCatalogFilters();
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await renderNavbar('index');
+  renderFooter();
+
   bindCatalogEvents();
+  await populateCategoryControls();
+  await loadInitialHighlights();
+  await applyCatalogFilters();
 });
 
 function calculateDiscountPercent(price, oldPrice) {
@@ -19,32 +22,38 @@ function calculateDiscountPercent(price, oldPrice) {
   return Math.round(((Number(oldPrice) - Number(price)) / Number(oldPrice)) * 100);
 }
 
-function populateCategoryControls() {
-  const categories = MockDB.getCategories();
+async function populateCategoryControls() {
   const select = document.getElementById('filter-category');
   const pillsContainer = document.getElementById('category-pills-container');
 
-  categories.forEach((cat) => {
-    const opt = document.createElement('option');
-    opt.value = String(cat.id);
-    opt.textContent = cat.name;
-    select.appendChild(opt);
-  });
+  try {
+    const data = await apiRequest('/api/categories');
+    const categories = data.categories || [];
 
-  let pillsHtml = `<button class="cat-pill active" data-cat="all">Todos</button>`;
-  categories.forEach((cat) => {
-    pillsHtml += `<button class="cat-pill" data-cat="${cat.id}">${cat.name}</button>`;
-  });
-  pillsContainer.innerHTML = pillsHtml;
-
-  pillsContainer.querySelectorAll('.cat-pill').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      activeCategoryId = btn.dataset.cat;
-      select.value = activeCategoryId;
-      syncCategoryPills();
-      applyCatalogFilters();
+    categories.forEach((cat) => {
+      const opt = document.createElement('option');
+      opt.value = String(cat.id);
+      opt.textContent = cat.name;
+      select.appendChild(opt);
     });
-  });
+
+    let pillsHtml = `<button class="cat-pill active" data-cat="all">Todos</button>`;
+    categories.forEach((cat) => {
+      pillsHtml += `<button class="cat-pill" data-cat="${cat.id}">${cat.name}</button>`;
+    });
+    pillsContainer.innerHTML = pillsHtml;
+
+    pillsContainer.querySelectorAll('.cat-pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeCategoryId = btn.dataset.cat;
+        select.value = activeCategoryId;
+        syncCategoryPills();
+        applyCatalogFilters();
+      });
+    });
+  } catch (err) {
+    showToast(`No se pudieron cargar las categorías: ${err.message}`, 'error');
+  }
 }
 
 function syncCategoryPills() {
@@ -53,13 +62,23 @@ function syncCategoryPills() {
   });
 }
 
-function renderHeroShowcase() {
+async function loadInitialHighlights() {
+  try {
+    const data = await apiRequest('/api/products?sort=featured');
+    const products = data.products || [];
+    renderHeroShowcase(products);
+    renderFeaturedDeals(products);
+  } catch (err) {
+    showToast(`Error al cargar destacados: ${err.message}`, 'error');
+  }
+}
+
+function renderHeroShowcase(products) {
   const host = document.getElementById('hero-featured-card');
-  const products = MockDB.getProducts().filter((p) => p.is_active);
   const featured = products.find((p) => p.is_featured) || products[0];
   if (!featured || !host) return;
 
-  const fallback = MockDB.getFallbackCover(featured.title);
+  const fallback = getFallbackCover(featured.title);
   const discount = calculateDiscountPercent(featured.price, featured.old_price);
 
   host.innerHTML = `
@@ -77,7 +96,9 @@ function renderHeroShowcase() {
             ${featured.old_price ? `<span class="old-price">$${Number(featured.old_price).toFixed(2)}</span>` : ''}
             <div class="current-price">$${Number(featured.price).toFixed(2)}</div>
           </div>
-          <button class="btn btn-primary btn-sm" data-quick-buy="${featured.id}">+ Agregar al Carrito</button>
+          <button class="btn btn-primary btn-sm" data-quick-buy="${featured.id}" ${featured.stock <= 0 ? 'disabled' : ''}>
+            ${featured.stock > 0 ? '+ Agregar al Carrito' : 'Sin Stock'}
+          </button>
         </div>
       </div>
     </div>
@@ -88,18 +109,18 @@ function renderHeroShowcase() {
   });
 }
 
-function renderFeaturedDeals() {
+function renderFeaturedDeals(products) {
   const grid = document.getElementById('featured-deals-grid');
   if (!grid) return;
 
-  const deals = MockDB.getProducts()
-    .filter((p) => p.is_active && p.old_price && Number(p.old_price) > Number(p.price))
+  const deals = products
+    .filter((p) => p.old_price && Number(p.old_price) > Number(p.price))
     .slice(0, 4);
 
   grid.innerHTML = deals
     .map((game) => {
       const discount = calculateDiscountPercent(game.price, game.old_price);
-      const fallback = MockDB.getFallbackCover(game.title);
+      const fallback = getFallbackCover(game.title);
       return `
         <article class="deal-mini-card">
           <div class="game-thumb-wrap" style="height:135px;">
@@ -116,7 +137,9 @@ function renderFeaturedDeals() {
                 <span class="old-price">$${Number(game.old_price).toFixed(2)}</span>
                 <span class="current-price" style="font-size:1.05rem;">$${Number(game.price).toFixed(2)}</span>
               </div>
-              <button class="btn btn-accent btn-sm" data-add-id="${game.id}">Agregar</button>
+              <button class="btn btn-accent btn-sm" data-add-id="${game.id}" ${game.stock <= 0 ? 'disabled' : ''}>
+                ${game.stock > 0 ? 'Agregar' : 'Agotado'}
+              </button>
             </div>
           </div>
         </article>
@@ -129,47 +152,27 @@ function renderFeaturedDeals() {
   });
 }
 
-function applyCatalogFilters() {
-  const query = document.getElementById('search-input').value.trim().toLowerCase();
+async function applyCatalogFilters() {
+  const query = document.getElementById('search-input').value.trim();
   const platform = document.getElementById('filter-platform').value;
   const sortBy = document.getElementById('filter-sort').value;
   const onlyOffers = document.getElementById('filter-only-offers').checked;
 
-  let list = MockDB.getProducts().filter((p) => p.is_active);
+  const params = new URLSearchParams();
+  if (query) params.set('search', query);
+  if (activeCategoryId !== 'all') params.set('category', activeCategoryId);
+  if (platform !== 'all') params.set('platform', platform);
+  if (onlyOffers) params.set('onlyOffers', 'true');
+  if (sortBy) params.set('sort', sortBy);
 
-  if (activeCategoryId !== 'all') {
-    list = list.filter((p) => String(p.category_id) === String(activeCategoryId));
+  try {
+    const data = await apiRequest(`/api/products?${params.toString()}`);
+    currentProducts = data.products || [];
+    renderCatalogGrid(currentProducts);
+  } catch (err) {
+    document.getElementById('results-counter').textContent = 'Error al cargar el catálogo.';
+    showToast(err.message, 'error');
   }
-
-  if (platform !== 'all') {
-    list = list.filter((p) => p.platform.toLowerCase().includes(platform.toLowerCase()));
-  }
-
-  if (onlyOffers) {
-    list = list.filter((p) => p.old_price && Number(p.old_price) > Number(p.price));
-  }
-
-  if (query) {
-    list = list.filter(
-      (p) =>
-        p.title.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.category_name.toLowerCase().includes(query) ||
-        p.platform.toLowerCase().includes(query)
-    );
-  }
-
-  if (sortBy === 'price-asc') {
-    list.sort((a, b) => Number(a.price) - Number(b.price));
-  } else if (sortBy === 'price-desc') {
-    list.sort((a, b) => Number(b.price) - Number(a.price));
-  } else if (sortBy === 'title-asc') {
-    list.sort((a, b) => a.title.localeCompare(b.title));
-  } else {
-    list.sort((a, b) => Number(b.is_featured) - Number(a.is_featured));
-  }
-
-  renderCatalogGrid(list);
 }
 
 function renderCatalogGrid(products) {
@@ -192,7 +195,7 @@ function renderCatalogGrid(products) {
   grid.innerHTML = products
     .map((game) => {
       const discount = calculateDiscountPercent(game.price, game.old_price);
-      const fallback = MockDB.getFallbackCover(game.title);
+      const fallback = getFallbackCover(game.title);
       const stockBadge =
         game.stock > 0
           ? `<span class="badge badge-success">Stock: ${game.stock}</span>`
@@ -243,23 +246,43 @@ function renderCatalogGrid(products) {
   });
 }
 
-function handleAddToCart(productId) {
-  const res = MockDB.addToCart(productId, 1);
-  if (res.ok) {
+async function handleAddToCart(productId) {
+  try {
+    const res = await apiRequest('/api/cart', {
+      method: 'POST',
+      body: { product_id: productId, quantity: 1 }
+    });
+    notifyCartUpdated(res.cart.total_items);
     showToast(res.message, 'success');
-  } else {
-    showToast(res.message, 'error');
+  } catch (err) {
+    if (err.status === 401) {
+      showToast('Inicia sesión para agregar videojuegos a tu carrito.', 'info');
+      setTimeout(() => {
+        window.location.href = './login.html';
+      }, 800);
+      return;
+    }
+    showToast(err.message, 'error');
   }
 }
 
-function openGameDetailModal(productId) {
-  const game = MockDB.getProducts().find((p) => p.id === Number(productId));
-  if (!game) return;
+async function openGameDetailModal(productId) {
+  let game = currentProducts.find((p) => p.id === Number(productId));
+
+  if (!game) {
+    try {
+      const res = await apiRequest(`/api/products/${productId}`);
+      game = res.product;
+    } catch (err) {
+      showToast(err.message, 'error');
+      return;
+    }
+  }
 
   const modal = document.getElementById('game-detail-modal');
   const titleEl = document.getElementById('modal-game-title');
   const bodyEl = document.getElementById('modal-game-body');
-  const fallback = MockDB.getFallbackCover(game.title);
+  const fallback = getFallbackCover(game.title);
 
   titleEl.textContent = game.title;
   bodyEl.innerHTML = `
@@ -282,8 +305,8 @@ function openGameDetailModal(productId) {
     </div>
   `;
 
-  bodyEl.querySelector('#modal-add-cart')?.addEventListener('click', () => {
-    handleAddToCart(game.id);
+  bodyEl.querySelector('#modal-add-cart')?.addEventListener('click', async () => {
+    await handleAddToCart(game.id);
     modal.classList.remove('open');
   });
 
@@ -302,7 +325,11 @@ function resetAllFilters() {
 }
 
 function bindCatalogEvents() {
-  document.getElementById('search-input').addEventListener('input', applyCatalogFilters);
+  document.getElementById('search-input').addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyCatalogFilters, 220);
+  });
+
   document.getElementById('btn-search-clear').addEventListener('click', resetAllFilters);
 
   document.getElementById('filter-category').addEventListener('change', (e) => {
@@ -326,4 +353,5 @@ function bindCatalogEvents() {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('open');
   });
+
 }
