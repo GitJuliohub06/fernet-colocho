@@ -353,4 +353,6 @@ function bindSellerEvents() {
       submitBtn.disabled = false;
     }
   });
+
+  
 }
