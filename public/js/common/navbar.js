@@ -1,9 +1,10 @@
 /**
- * FERNET&COLOCHO — BARRA DE NAVEGACIÓN, CAMBIADOR DE ROL DEMO Y TOASTS
- * Se inyecta automáticamente en cualquier página que tenga <div id="app-navbar"></div>
+ * FERNET&COLOCHO — BARRA DE NAVEGACIÓN, SESIÓN REAL Y TOASTS
  */
 
-import { MockDB } from './mock-data.js';
+import { apiRequest } from './api.js';
+
+let cartListenerBound = false;
 
 export function showToast(message, type = 'info') {
   let container = document.getElementById('fc-toast-container');
@@ -16,12 +17,20 @@ export function showToast(message, type = 'info') {
 
   const toast = document.createElement('div');
   toast.className = `fc-toast ${type}`;
-  toast.innerHTML = `
-    <span>${message}</span>
-    <button style="background:none;border:none;color:inherit;cursor:pointer;font-weight:700;">✕</button>
-  `;
 
-  toast.querySelector('button').addEventListener('click', () => toast.remove());
+  const textSpan = document.createElement('span');
+  textSpan.textContent = message;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.color = 'inherit';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.fontWeight = '700';
+  closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', () => toast.remove());
+
+  toast.append(textSpan, closeBtn);
   container.appendChild(toast);
 
   setTimeout(() => {
@@ -29,13 +38,28 @@ export function showToast(message, type = 'info') {
   }, 3800);
 }
 
-export function renderNavbar(activePage = 'index') {
+export async function renderNavbar(activePage = 'index') {
   const navHost = document.getElementById('app-navbar');
-  if (!navHost) return;
+  if (!navHost) return null;
 
-  const session = MockDB.getSession();
-  const cart = MockDB.getCart();
-  const cartCount = cart.reduce((acc, item) => acc + Number(item.quantity), 0);
+  let session = null;
+  let cartCount = 0;
+
+  try {
+    const authRes = await apiRequest('/api/auth/me');
+    session = authRes.user || null;
+  } catch (err) {
+    console.error('Error al consultar sesión en navbar:', err);
+  }
+
+  if (session) {
+    try {
+      const cartRes = await apiRequest('/api/cart');
+      cartCount = Number(cartRes.total_items || 0);
+    } catch (_err) {
+      cartCount = 0;
+    }
+  }
 
   let roleLinkHtml = '';
   if (session) {
@@ -79,16 +103,6 @@ export function renderNavbar(activePage = 'index') {
         </nav>
 
         <div class="fc-nav-actions">
-          <div class="fc-role-switcher" title="Selector rápido de rol para demostración de Frontend">
-            <span>Modo Demo:</span>
-            <select id="demo-role-select">
-              <option value="guest" ${!session ? 'selected' : ''}>Público (Sin sesión)</option>
-              <option value="comprador" ${session?.role === 'comprador' ? 'selected' : ''}>Rol: Comprador</option>
-              <option value="vendedor" ${session?.role === 'vendedor' ? 'selected' : ''}>Rol: Vendedor</option>
-              <option value="admin" ${session?.role === 'admin' ? 'selected' : ''}>Rol: Administrador</option>
-            </select>
-          </div>
-
           <a href="./buyer.html" class="fc-cart-btn" title="Ir al carrito y facturación">
             <span>🛒</span>
             <span id="nav-cart-badge" class="fc-cart-count">${cartCount}</span>
@@ -102,42 +116,40 @@ export function renderNavbar(activePage = 'index') {
 
   const logoutBtn = document.getElementById('btn-logout-nav');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      MockDB.setSession(null);
-      showToast('Sesión cerrada correctamente.', 'info');
-      setTimeout(() => {
-        window.location.href = './index.html';
-      }, 400);
-    });
-  }
-
-  const demoSelect = document.getElementById('demo-role-select');
-  if (demoSelect) {
-    demoSelect.addEventListener('change', (e) => {
-      const val = e.target.value;
-      const users = MockDB.getUsers();
-      if (val === 'guest') {
-        MockDB.setSession(null);
-        window.location.href = './index.html';
-      } else {
-        const found = users.find((u) => u.role === val);
-        if (found) {
-          MockDB.setSession(found);
-          if (val === 'comprador') window.location.href = './buyer.html';
-          if (val === 'vendedor') window.location.href = './seller.html';
-          if (val === 'admin') window.location.href = './admin.html';
-        }
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await apiRequest('/api/auth/logout', { method: 'POST' });
+        showToast('Sesión cerrada correctamente.', 'info');
+        setTimeout(() => {
+          window.location.href = './index.html';
+        }, 400);
+      } catch (err) {
+        showToast(err.message, 'error');
       }
     });
   }
 
-  window.addEventListener('fc:cart-updated', () => {
-    const badge = document.getElementById('nav-cart-badge');
-    if (badge) {
-      const updated = MockDB.getCart().reduce((a, b) => a + Number(b.quantity), 0);
-      badge.textContent = updated;
-    }
-  });
+  if (!cartListenerBound) {
+    cartListenerBound = true;
+    window.addEventListener('fc:cart-updated', async (e) => {
+      const badge = document.getElementById('nav-cart-badge');
+      if (!badge) return;
+
+      if (e.detail && typeof e.detail.totalItems === 'number') {
+        badge.textContent = e.detail.totalItems;
+        return;
+      }
+
+      try {
+        const updatedCart = await apiRequest('/api/cart');
+        badge.textContent = Number(updatedCart.total_items || 0);
+      } catch (_err) {
+        badge.textContent = '0';
+      }
+    });
+  }
+
+  return session;
 }
 
 export function renderFooter() {
@@ -166,8 +178,7 @@ export function renderFooter() {
           </div>
           <div>
             <strong style="color:var(--text-main);display:block;margin-bottom:0.5rem;">Entorno de Laboratorio</strong>
-            <p>Proyecto académico Full Stack — Debian Server, Apache, Node.js, Express y PostgreSQL en Docker.</p>
-            <button id="btn-reset-demo-db" class="btn btn-outline btn-sm" style="margin-top:0.6rem;">🔄 Restaurar Datos Demo</button>
+            <p>Proyecto académico Full Stack — Debian Server 13, Nginx, Node.js, Express y PostgreSQL.</p>
           </div>
         </div>
         <div class="fc-footer-bottom">
@@ -177,14 +188,4 @@ export function renderFooter() {
       </div>
     </footer>
   `;
-
-  const resetBtn = document.getElementById('btn-reset-demo-db');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      if (confirm('¿Restaurar los 15 videojuegos y usuarios de fábrica en el navegador?')) {
-        MockDB.resetAll();
-        window.location.reload();
-      }
-    });
-  }
 }
