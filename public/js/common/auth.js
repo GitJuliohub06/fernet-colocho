@@ -1,10 +1,21 @@
-import { MockDB } from './mock-data.js';
+import { apiRequest } from './api.js';
 import { renderNavbar, renderFooter, showToast } from './navbar.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+const DEMO_CREDENTIALS = {
+  comprador: { identifier: 'comprador', password: 'Comprador123!' },
+  vendedor: { identifier: 'vendedor', password: 'Vendedor123!' },
+  admin: { identifier: 'admin', password: 'Admin123!' }
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
   const isLoginPage = Boolean(document.getElementById('login-form'));
-  renderNavbar(isLoginPage ? 'login' : 'register');
+  const session = await renderNavbar(isLoginPage ? 'login' : 'register');
   renderFooter();
+
+  if (session) {
+    redirectByRole(session.role);
+    return;
+  }
 
   if (isLoginPage) {
     initLoginView();
@@ -35,82 +46,51 @@ function initLoginView() {
   const form = document.getElementById('login-form');
   const identifierInput = document.getElementById('login-identifier');
   const passwordInput = document.getElementById('login-password');
-  const sqlPreview = document.getElementById('sql-live-preview');
-
-  function updateSqlPreview() {
-    if (!sqlPreview) return;
-    const u = identifierInput.value;
-    const p = passwordInput.value;
-    sqlPreview.textContent = `SELECT id, full_name, username, email, role\nFROM users\nWHERE (username = '${u}' OR email = '${u}')\n  AND password_hash = '${p}';`;
-  }
-
-  identifierInput.addEventListener('input', updateSqlPreview);
-  passwordInput.addEventListener('input', updateSqlPreview);
+  const submitBtn = form.querySelector('button[type="submit"]');
 
   document.querySelectorAll('[data-fill-role]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const role = btn.dataset.fillRole;
-      const user = MockDB.getUsers().find((u) => u.role === role);
-      if (user) {
-        identifierInput.value = user.username;
-        passwordInput.value = user.password_plain;
-        updateSqlPreview();
-        showToast(`Credenciales de ${role.toUpperCase()} cargadas.`, 'info');
+      const creds = DEMO_CREDENTIALS[role];
+      if (creds) {
+        identifierInput.value = creds.identifier;
+        passwordInput.value = creds.password;
+        showToast(`Credenciales de prueba de ${role.toUpperCase()} cargadas.`, 'info');
       }
     });
   });
 
-  document.getElementById('btn-inject-payload')?.addEventListener('click', () => {
-    identifierInput.value = "admin' OR '1'='1' --";
-    passwordInput.value = 'cualquier_cosa';
-    updateSqlPreview();
-    showToast('Payload SQL Injection cargado en el campo Usuario.', 'info');
-  });
-
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const rawUser = identifierInput.value.trim();
-    const rawPass = passwordInput.value.trim();
+    const identifier = identifierInput.value.trim();
+    const password = passwordInput.value;
 
-    if (!rawUser || !rawPass) {
+    if (!identifier || !password) {
       showAlert('auth-alert', 'Por favor completa tanto el usuario como la contraseña.');
       return;
     }
 
-    const users = MockDB.getUsers();
+    submitBtn.disabled = true;
+    try {
+      const res = await apiRequest('/api/auth/login', {
+        method: 'POST',
+        body: { identifier, password }
+      });
 
-    // Simulación fiel del comportamiento vulnerable SQLi para demostración antes de conectar PostgreSQL
-    if (rawUser.includes("' OR '1'='1") || rawUser.includes("' OR 1=1")) {
-      const targetAdmin = users.find((u) => u.role === 'admin') || users[0];
-      MockDB.setSession(targetAdmin);
-      showAlert('auth-alert', '¡Explotación SQL Injection exitosa! Accediendo como Administrador...', 'success');
-      setTimeout(() => redirectByRole(targetAdmin.role), 700);
-      return;
+      showAlert('auth-alert', `${res.message} Redirigiendo a tu panel...`, 'success');
+      setTimeout(() => redirectByRole(res.user.role), 500);
+    } catch (err) {
+      showAlert('auth-alert', err.message, 'error');
+      submitBtn.disabled = false;
     }
-
-    const found = users.find(
-      (u) =>
-        u.is_active &&
-        (u.username.toLowerCase() === rawUser.toLowerCase() ||
-          u.email.toLowerCase() === rawUser.toLowerCase()) &&
-        u.password_plain === rawPass
-    );
-
-    if (!found) {
-      showAlert('auth-alert', 'Credenciales inválidas o cuenta desactivada. Verifica tus datos.');
-      return;
-    }
-
-    MockDB.setSession(found);
-    showAlert('auth-alert', `Bienvenido, ${found.full_name}. Redirigiendo a tu panel...`, 'success');
-    setTimeout(() => redirectByRole(found.role), 600);
   });
 }
 
 function initRegisterView() {
   const form = document.getElementById('register-form');
+  const submitBtn = form.querySelector('button[type="submit"]');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const fullName = document.getElementById('reg-fullname').value.trim();
@@ -139,36 +119,25 @@ function initRegisterView() {
       return;
     }
 
-    const users = MockDB.getUsers();
-    const exists = users.some(
-      (u) =>
-        u.username.toLowerCase() === username.toLowerCase() ||
-        u.email.toLowerCase() === email.toLowerCase()
-    );
+    submitBtn.disabled = true;
+    try {
+      await apiRequest('/api/auth/register', {
+        method: 'POST',
+        body: {
+          full_name: fullName,
+          username,
+          email,
+          password
+        }
+      });
 
-    if (exists) {
-      showAlert('register-alert', 'El nombre de usuario o correo electrónico ya está registrado.');
-      return;
+      showAlert('register-alert', '¡Cuenta creada con éxito! Redirigiendo a la zona de comprador...', 'success');
+      setTimeout(() => {
+        window.location.href = './buyer.html';
+      }, 650);
+    } catch (err) {
+      showAlert('register-alert', err.message, 'error');
+      submitBtn.disabled = false;
     }
-
-    const newUser = {
-      id: users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-      full_name: fullName,
-      username,
-      email,
-      password_plain: password,
-      role: 'comprador', // Regla estricta: el registro público jamás crea admins
-      is_active: true,
-      created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-    };
-
-    users.push(newUser);
-    MockDB.saveUsers(users);
-    MockDB.setSession(newUser);
-
-    showAlert('register-alert', '¡Cuenta creada con éxito! Redirigiendo a la zona de comprador...', 'success');
-    setTimeout(() => {
-      window.location.href = './buyer.html';
-    }, 750);
   });
 }
