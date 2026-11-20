@@ -1,0 +1,15 @@
+[Unit]
+Description=Backend Express - Fernet & Colocho Store
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/fernet-colocho/fernet-colocho/
+ExecStart=/usr/bin/node /var/www/fernet-colocho/fernet-colocho/src/server.js
+Restart=on-failure
+RestartSec=3
+EnvironmentFile=/var/www/fernet-colocho/fernet-colocho/.env
+
+[Install]
+WantedBy=multi-user.target
