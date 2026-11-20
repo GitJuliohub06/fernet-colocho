@@ -48,7 +48,10 @@ function requireRole(...allowedRoles) {
     }
 
     next();
+
   };
+
 }
+
 
 module.exports = { requireAuth, requireRole };

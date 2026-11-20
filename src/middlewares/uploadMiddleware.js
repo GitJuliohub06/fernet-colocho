@@ -37,6 +37,9 @@ const uploadProductImage = multer({
       cb(new Error('Solo se permiten imágenes JPG, PNG, WEBP o GIF (máx. 5 MB).'));
     }
   }
+  
 });
+
+//
 
 module.exports = { uploadProductImage };
