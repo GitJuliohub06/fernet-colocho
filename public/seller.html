@@ -118,20 +118,29 @@
           </div>
 
           <div class="form-group">
-            <label for="prod-image" class="form-label">URL o Ruta de Portada *</label>
+            <label for="prod-image" class="form-label">URL o Ruta de Portada</label>
             <input
               type="text"
               id="prod-image"
               class="form-control"
-              placeholder="https://shared.akamai.steamstatic.com/..."
-              required
+              placeholder="/assets/games/elden-ring.jpg o URL externa"
             />
             <div class="preset-covers-bar">
               <span>Portadas rápidas:</span>
-              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/553850/header.jpg">Helldivers 2</button>
-              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623730/header.jpg">Palworld</button>
-              <button type="button" class="preset-btn" data-cover="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg">Black Myth: Wukong</button>
+              <button type="button" class="preset-btn" data-cover="/assets/games/elden-ring.jpg">Elden Ring</button>
+              <button type="button" class="preset-btn" data-cover="/assets/games/cyberpunk-2077.jpg">Cyberpunk 2077</button>
+              <button type="button" class="preset-btn" data-cover="/assets/games/hades-2.jpg">Hades II</button>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-image-file" class="form-label">O subir imagen local (JPG, PNG, WEBP — máx. 5 MB)</label>
+            <input
+              type="file"
+              id="prod-image-file"
+              class="form-control"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+            />
           </div>
 
           <!-- VISTA PREVIA DE IMAGEN -->
