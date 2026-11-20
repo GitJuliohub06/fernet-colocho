@@ -5,6 +5,8 @@ let activeCategoryId = 'all';
 let currentProducts = [];
 let searchTimer = null;
 
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   await renderNavbar('index');
   renderFooter();
@@ -351,4 +353,5 @@ function bindCatalogEvents() {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('open');
   });
+
 }

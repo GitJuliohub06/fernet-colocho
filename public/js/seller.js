@@ -106,7 +106,11 @@ async function renderSellerInventory() {
       (p) => Number(p.stock) <= 5
     ).length;
 
+
+
     tbody.replaceChildren();
+
+    
 
     if (loadedProducts.length === 0) {
       const row = document.createElement('tr');
@@ -354,5 +358,5 @@ function bindSellerEvents() {
     }
   });
 
-  
+
 }
