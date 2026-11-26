@@ -182,7 +182,6 @@ export function renderFooter() {
               <li><a href="./index.html">Catálogo y Ofertas</a></li>
               <li><a href="./login.html">Iniciar Sesión</a></li>
               <li><a href="./register.html">Registro de Compradores</a></li>
-              <li><a href="./buyer.html">Mi Carrito y Facturas</a></li>
             </ul>
           </div>
           <div>
