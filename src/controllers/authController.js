@@ -72,20 +72,13 @@ async function login(req, res) {
     }
 
     const passwordHash = hashPassword(password);
-    const result = await console.log( `
-  SELECT id, full_name, username, email, role, is_active
-  FROM users
-  WHERE (LOWER(username) = LOWER('${identifier}') OR LOWER(email) = LOWER('${identifier}'))
-    AND password_hash = '${passwordHash}'
-  LIMIT 1
-`); pool.query(
-      `
-  SELECT id, full_name, username, email, role, is_active
-  FROM users
-  WHERE (LOWER(username) = LOWER('${identifier}') OR LOWER(email) = LOWER('${identifier}'))
-    AND password_hash = '${passwordHash}'
-  LIMIT 1
-`
+    const result = await pool.query(
+      `SELECT id, full_name, username, email, role, is_active
+       FROM users
+       WHERE (LOWER(username) = LOWER($1) OR LOWER(email) = LOWER($1))
+         AND password_hash = $2
+       LIMIT 1`,
+      [identifier, passwordHash]
     );
 
     if (result.rows.length === 0) {

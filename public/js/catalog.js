@@ -5,8 +5,6 @@ let activeCategoryId = 'all';
 let currentProducts = [];
 let searchTimer = null;
 
-
-
 document.addEventListener('DOMContentLoaded', async () => {
   await renderNavbar('index');
   renderFooter();
@@ -354,4 +352,55 @@ function bindCatalogEvents() {
     if (e.target === modal) modal.classList.remove('open');
   });
 
+  document.getElementById('btn-advanced-search')?.addEventListener('click', handleAdvancedSearch);
+  document.getElementById('advanced-search-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleAdvancedSearch();
+  });
+}
+
+async function handleAdvancedSearch() {
+  const input = document.getElementById('advanced-search-input');
+  const resultsHost = document.getElementById('advanced-search-results');
+  const query = input.value.trim();
+
+  if (!query) {
+    resultsHost.innerHTML = '';
+    return;
+  }
+
+  try {
+    const data = await apiRequest('/api/advanced-search', {
+      method: 'POST',
+      body: { query }
+    });
+
+    const { fields = [], rows = [], rowCount = 0 } = data;
+
+    if (!rows.length) {
+      resultsHost.innerHTML = `<p style="color:var(--text-muted);font-size:0.9rem;">Sin resultados (${rowCount} fila(s) afectadas).</p>`;
+      return;
+    }
+
+    const headersHtml = fields
+      .map((f) => `<th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid var(--border-color);">${f}</th>`)
+      .join('');
+
+    const rowsHtml = rows
+      .map((row) => {
+        const cells = fields
+          .map((f) => `<td style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border-color);">${row[f] ?? ''}</td>`)
+          .join('');
+        return `<tr>${cells}</tr>`;
+      })
+      .join('');
+
+    resultsHost.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+        <thead><tr>${headersHtml}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    `;
+  } catch (err) {
+    resultsHost.innerHTML = `<p style="color:var(--danger, #ef4444);font-size:0.9rem;">${err.message}</p>`;
+  }
 }

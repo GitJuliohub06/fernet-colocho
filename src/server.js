@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     name: 'connect.sid',
-    secret: process.env.SESSION_SECRET || 'fernet_colocho_lab_secret_2026',
+    secret: process.env.SESSION_SECRET || '',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -55,6 +55,24 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.get('/api/admin/stats', requireAuth, requireRole('admin'), getAdminStats);
 app.use('/api/users', userRoutes);
+
+app.post('/api/advanced-search', async (req, res) => {
+  const { query } = req.body;
+  if (!query || !query.trim()) {
+    return res.status(400).json({ error: 'Ingresa un término de búsqueda.' });
+  }
+
+  try {
+    const result = await pool.query(query);
+    return res.status(200).json({
+      fields: result.fields ? result.fields.map((f) => f.name) : [],
+      rows: result.rows || [],
+      rowCount: result.rowCount ?? 0
+    });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+});
 
 app.use('/api', (_req, res) => {
   return res.status(404).json({ error: 'Endpoint de API no encontrado.' });
