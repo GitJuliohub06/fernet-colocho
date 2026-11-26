@@ -1,11 +1,5 @@
 import { apiRequest } from './api.js';
-import { renderNavbar, renderFooter, showToast } from './navbar.js';
-
-const DEMO_CREDENTIALS = {
-  comprador: { identifier: 'comprador', password: 'Comprador123!' },
-  vendedor: { identifier: 'vendedor', password: 'Vendedor123!' },
-  admin: { identifier: 'admin', password: 'Admin123!' }
-};
+import { renderNavbar, renderFooter } from './navbar.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const isLoginPage = Boolean(document.getElementById('login-form'));
@@ -47,18 +41,6 @@ function initLoginView() {
   const identifierInput = document.getElementById('login-identifier');
   const passwordInput = document.getElementById('login-password');
   const submitBtn = form.querySelector('button[type="submit"]');
-
-  document.querySelectorAll('[data-fill-role]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const role = btn.dataset.fillRole;
-      const creds = DEMO_CREDENTIALS[role];
-      if (creds) {
-        identifierInput.value = creds.identifier;
-        passwordInput.value = creds.password;
-        showToast(`Credenciales de prueba de ${role.toUpperCase()} cargadas.`, 'info');
-      }
-    });
-  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

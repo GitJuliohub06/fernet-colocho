@@ -24,21 +24,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  renderAdminRoleBanner(currentSession);
   bindAdminEvents();
   await populateAdminCategories();
   await refreshAllAdminData();
 });
-
-function renderAdminRoleBanner(session) {
-  const banner = document.getElementById('admin-role-banner');
-  banner.innerHTML = `
-    <div>
-      ✅ <strong>Sesión Administrativa Verificada:</strong> ${session.full_name} (<code>@${session.username}</code>)
-    </div>
-    <span class="badge badge-discount">Control Total Activo</span>
-  `;
-}
 
 async function populateAdminCategories() {
   const select = document.getElementById('adm-prod-category');

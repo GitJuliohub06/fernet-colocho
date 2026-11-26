@@ -7,19 +7,6 @@
   min-width: 0;
 }
 
-.admin-access-banner {
-  padding: 0.85rem 1.1rem;
-  border-radius: var(--radius-sm);
-  background: rgba(139, 92, 246, 0.14);
-  border: 1px solid rgba(139, 92, 246, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  font-size: 0.86rem;
-}
-
 .admin-layout {
   display: grid;
   grid-template-columns: 265px 1fr;
@@ -190,11 +177,6 @@
 }
 
 @media (max-width: 600px) {
-  .admin-access-banner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .admin-side-nav {
     flex-direction: column;
   }
