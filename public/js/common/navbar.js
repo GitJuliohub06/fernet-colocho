@@ -1,5 +1,5 @@
 /**
- * FERNET&COLOCHO — BARRA DE NAVEGACIÓN, SESIÓN REAL Y TOASTS
+- FERNET&COLOCHO — BARRA DE NAVEGACIÓN, SESIÓN REAL Y TOASTS
  */
 
 import { apiRequest } from './api.js';
@@ -69,11 +69,24 @@ export async function renderNavbar(activePage = 'index') {
       roleLinkHtml = `<a href="./seller.html" class="fc-nav-link role-link ${activePage === 'seller' ? 'active' : ''}">📦 Panel Vendedor</a>`;
     } else if (session.role === 'admin') {
       roleLinkHtml = `
-        <a href="./seller.html" class="fc-nav-link ${activePage === 'seller' ? 'active' : ''}">Panel Vendedor</a>
+        <a href="./seller.html" class="fc-nav-link role-link ${activePage === 'seller' ? 'active' : ''}">Panel Vendedor</a>
         <a href="./admin.html" class="fc-nav-link role-link ${activePage === 'admin' ? 'active' : ''}">🛡️ Panel Admin</a>
       `;
     }
   }
+
+  const billingLinkHtml = session
+    ? `<a href="./buyer.html" class="fc-nav-link ${activePage === 'buyer' ? 'active' : ''}">Facturación</a>`
+    : '';
+
+  const cartBtnHtml = session
+    ? `
+      <a href="./buyer.html" class="fc-cart-btn" title="Ir al carrito y facturación">
+        <span>🛒</span>
+        <span id="nav-cart-badge" class="fc-cart-count">${cartCount}</span>
+      </a>
+    `
+    : '';
 
   const userActionsHtml = session
     ? `
@@ -98,16 +111,12 @@ export async function renderNavbar(activePage = 'index') {
 
         <nav class="fc-nav-links">
           <a href="./index.html" class="fc-nav-link ${activePage === 'index' ? 'active' : ''}">Tienda</a>
-          <a href="./buyer.html" class="fc-nav-link ${activePage === 'buyer' ? 'active' : ''}">Facturación</a>
+          ${billingLinkHtml}
           ${roleLinkHtml}
         </nav>
 
         <div class="fc-nav-actions">
-          <a href="./buyer.html" class="fc-cart-btn" title="Ir al carrito y facturación">
-            <span>🛒</span>
-            <span id="nav-cart-badge" class="fc-cart-count">${cartCount}</span>
-          </a>
-
+          ${cartBtnHtml}
           ${userActionsHtml}
         </div>
       </div>
