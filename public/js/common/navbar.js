@@ -183,7 +183,7 @@ export function renderFooter() {
         </div>
         <div class="fc-footer-bottom">
           <span>© 2026 Fernet&Colocho Store. Todos los derechos reservados.</span>
-          <span>Equipo: Samuel · Colocho · Andrea · Julio · Jeremy</span>
+          <span>Equipo: Samuel · Colocho · Andrea · Julio · Jeremy · f-colocho</span>
         </div>
       </div>
     </footer>
