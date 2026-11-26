@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  renderBuyerSessionBanner(currentSession);
+  // renderBuyerSessionBanner(currentSession);
   bindBuyerEvents();
   await Promise.all([
     loadQuickCatalog(''),
@@ -25,15 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   ]);
 });
 
-function renderBuyerSessionBanner(session) {
-  const banner = document.getElementById('buyer-role-banner');
-  banner.innerHTML = `
-    <div>
-      ✅ <strong>Sesión activa:</strong> ${session.full_name} (<code>@${session.username}</code> — Rol: <strong>${session.role.toUpperCase()}</strong>)
-    </div>
-    <span class="badge badge-success">Listo para facturar</span>
-  `;
-}
+
 
 async function loadQuickCatalog(filterText = '') {
   const container = document.getElementById('buyer-products-list');
