@@ -178,7 +178,7 @@ export function renderFooter() {
           </div>
           <div>
             <strong style="color:var(--text-main);display:block;margin-bottom:0.5rem;">Entorno de Laboratorio</strong>
-            <p>Proyecto académico Full Stack — Debian Server 13, Apache, Node.js, Express y PostgreSQL.</p>
+            <p>Proyecto académico Full Stack — Debian Server 13, Apache2, Node.js, Express y PostgreSQL.</p>
           </div>
         </div>
         <div class="fc-footer-bottom">
