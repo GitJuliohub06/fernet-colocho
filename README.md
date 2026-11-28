@@ -6,8 +6,6 @@
 ![Apache2](https://img.shields.io/badge/Apache2-Reverse_Proxy-D22128?style=for-the-badge&logo=apache&logoColor=white)
 ![Debian](https://img.shields.io/badge/Debian-13_Trixie-A81D33?style=for-the-badge&logo=debian&logoColor=white)
 
-> **Aviso de seguridad:** Este proyecto es un entorno de laboratorio controlado diseñado con fines estrictamente educativos. Contiene vulnerabilidades intencionales para prácticas de seguridad ofensiva (Red Team) y defensiva (Blue Team). No debe desplegarse en entornos de producción.
-
 ---
 
 ## Descripción
